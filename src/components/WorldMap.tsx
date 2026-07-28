@@ -62,9 +62,9 @@ export function WorldMap({ view, onSelect, selected, pins }: Props) {
 
   const paths = useMemo(
     () =>
-      FEATURES.map((f: Feature<Geometry, { name: string }>) => {
+      FEATURES.map((f: Feature<Geometry, { name: string }>, i: number) => {
         const info = BY_CCN3[String(f.id).padStart(3, "0")];
-        return { id: String(f.id), cca2: info?.cca2, name: info?.name ?? f.properties?.name, d: path(f) };
+        return { id: `${f.id}-${i}`, cca2: info?.cca2, name: info?.name ?? f.properties?.name, d: path(f) };
       }).filter((p) => p.d),
     [path],
   );
