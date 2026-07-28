@@ -120,6 +120,7 @@ export function WorldMap({ view, onSelect, selected, pins }: Props) {
     <div className="relative w-full select-none overflow-hidden rounded-[var(--radius)]">
       <svg
         ref={svgRef}
+        data-scratch-map=""
         viewBox={`0 0 ${W} ${H}`}
         className="w-full touch-none"
         style={{ background: "var(--map-ocean)" }}
