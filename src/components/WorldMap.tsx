@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { geoEquirectangular, geoOrthographic, geoPath, geoGraticule10, geoCentroid } from "d3-geo";
+import { geoEquirectangular, geoOrthographic, geoPath, geoGraticule10, geoCentroid, geoDistance } from "d3-geo";
 import { feature } from "topojson-client";
 import type { FeatureCollection, Feature, Geometry } from "geojson";
 import topo from "world-atlas/countries-110m.json";
@@ -167,11 +167,11 @@ export function WorldMap({ view, onSelect, selected, pins }: Props) {
           ))}
           {pins.map((pl) => {
             if (pl.lat == null || pl.lng == null) return null;
-            if (view === "globe") {
-              const c = projection.rotate();
-              const proj = geoOrthographic().rotate(c);
-              void proj;
-            }
+            if (
+              view === "globe" &&
+              geoDistance([-rotation[0], -rotation[1]], [pl.lng, pl.lat]) > Math.PI / 2
+            )
+              return null;
             const xy = projection([pl.lng, pl.lat]);
             if (!xy) return null;
             const color =
