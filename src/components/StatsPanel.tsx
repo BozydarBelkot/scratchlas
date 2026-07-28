@@ -186,7 +186,7 @@ export function StatsPanel() {
           <Download className="size-4" /> Map image
         </Button>
         <Button className="gap-2" onClick={share}>
-          {copied ? <Check className="size-4" /> : navigator?.share ? <Share2 className="size-4" /> : <Copy className="size-4" />}
+          {copied ? <Check className="size-4" /> : <Share2 className="size-4" />}
           {copied ? "Link copied" : "Share link"}
         </Button>
       </div>
