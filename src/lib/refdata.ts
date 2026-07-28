@@ -111,3 +111,11 @@ export const TAP_WATER_LABEL: Record<TapWater, string> = {
   unsafe: "Not recommended — drink bottled",
   unknown: "No data available",
 };
+
+// Countries that drive on the left (ISO alpha-2). Everything else drives right.
+export const LEFT_DRIVING = new Set([
+  "AG","AU","BS","BD","BB","BM","BT","BW","BN","KY","CX","CC","CK","CY","DM","FK","FJ","GD","GG",
+  "GY","HK","IN","ID","IE","IM","JM","JP","JE","KE","KI","LS","MO","MW","MY","MV","MT","MU","MS",
+  "MZ","NA","NR","NP","NZ","NU","NF","PK","PG","PN","SH","KN","LC","VC","WS","SC","SG","SB","SO",
+  "ZA","SS","LK","SR","SZ","TZ","TH","TL","TK","TO","TT","TC","TV","UG","GB","VG","VI","ZM","ZW",
+]);
