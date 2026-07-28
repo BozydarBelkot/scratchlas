@@ -1,5 +1,5 @@
 import worldCountries from "world-countries";
-import { extrasFor, type CountryExtra } from "./refdata";
+import { extrasFor, LEFT_DRIVING, type CountryExtra } from "./refdata";
 
 export interface CountryInfo {
   cca2: string;
@@ -40,7 +40,7 @@ function build(c: RawCountry): CountryInfo {
     capital: c.capital?.[0] ?? "—",
     latlng: [c.latlng[0], c.latlng[1]],
     area: c.area,
-    drivingSide: (c.car?.side as "left" | "right") ?? "right",
+    drivingSide: LEFT_DRIVING.has(c.cca2) ? "left" : "right",
     currency: cur ? `${cur[1].name} (${cur[0]}${cur[1].symbol ? ` ${cur[1].symbol}` : ""})` : "—",
     dial: c.idd?.root ? `${c.idd.root}${dialSuffix}` : "—",
     extra: extrasFor(c.cca2, c.region),
