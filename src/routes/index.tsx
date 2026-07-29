@@ -5,22 +5,20 @@ import {
   Globe2,
   Map as MapIcon,
   Moon,
-  Search,
   Sun,
   Trophy,
   LifeBuoy,
   Flag,
 } from "lucide-react";
-import { StoreProvider, useStore, STATUS_LABEL, type MapTheme } from "@/lib/store";
+import { StoreProvider, useStore, type MapTheme } from "@/lib/store";
 import { WorldMap } from "@/components/WorldMap";
 import { CountrySheet } from "@/components/CountrySheet";
 import { CountriesPanel } from "@/components/CountriesPanel";
 import { JournalPanel } from "@/components/JournalPanel";
 import { StatsPanel } from "@/components/StatsPanel";
 import { GuidePanel } from "@/components/GuidePanel";
-import { COUNTRIES } from "@/lib/countries";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+
 
 
 export const Route = createFileRoute("/")({
