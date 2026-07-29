@@ -18,7 +18,7 @@ import { CountriesPanel } from "@/components/CountriesPanel";
 import { JournalPanel } from "@/components/JournalPanel";
 import { StatsPanel } from "@/components/StatsPanel";
 import { GuidePanel } from "@/components/GuidePanel";
-import { COUNTRIES, BY_CCA2 } from "@/lib/countries";
+import { COUNTRIES } from "@/lib/countries";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
