@@ -88,26 +88,6 @@ export function WorldMap({ view, onSelect, selected, pins }: Props) {
     setRotation([-lon, -lat]);
   }, [selected, view]);
 
-  function onPointerDown(e: React.PointerEvent) {
-    (e.target as Element).setPointerCapture?.(e.pointerId);
-    drag.current = { x: e.clientX, y: e.clientY, r: rotation, p: pan };
-  }
-  function onPointerMove(e: React.PointerEvent) {
-    const d = drag.current;
-    if (!d) return;
-    const dx = e.clientX - d.x;
-    const dy = e.clientY - d.y;
-    if (Math.abs(dx) + Math.abs(dy) < 3) return;
-    if (view === "globe") {
-      setRotation([d.r[0] + dx * 0.32, Math.max(-90, Math.min(90, d.r[1] - dy * 0.32))]);
-    } else {
-      setPan([d.p[0] + dx, d.p[1] + dy]);
-    }
-  }
-  function onPointerUp() {
-    drag.current = null;
-  }
-
   const statusFill = (cca2?: string) => {
     const s: Status | undefined = cca2 ? statusByCountry[cca2] : undefined;
     if (s === "visited") return "var(--map-visited)";
@@ -116,29 +96,74 @@ export function WorldMap({ view, onSelect, selected, pins }: Props) {
     return "var(--map-land)";
   };
 
+  const pointers = useRef<Map<number, { x: number; y: number }>>(new Map());
+
+  const pinch = useRef<{ dist: number; zoom: number } | null>(null);
+
+  function onPointerDown(e: React.PointerEvent) {
+    (e.target as Element).setPointerCapture?.(e.pointerId);
+    pointers.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if (pointers.current.size === 2) {
+      const [a, b] = [...pointers.current.values()];
+      pinch.current = { dist: Math.hypot(a.x - b.x, a.y - b.y), zoom };
+      drag.current = null;
+      return;
+    }
+    drag.current = { x: e.clientX, y: e.clientY, r: rotation, p: pan };
+  }
+  function onPointerMove(e: React.PointerEvent) {
+    if (pointers.current.has(e.pointerId))
+      pointers.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if (pinch.current && pointers.current.size >= 2) {
+      const [a, b] = [...pointers.current.values()];
+      const d = Math.hypot(a.x - b.x, a.y - b.y);
+      const next = pinch.current.zoom * (d / (pinch.current.dist || 1));
+      setZoom(Math.min(8, Math.max(1, next)));
+      return;
+    }
+    const d = drag.current;
+    if (!d) return;
+    const dx = e.clientX - d.x;
+    const dy = e.clientY - d.y;
+    if (Math.abs(dx) + Math.abs(dy) < 3) return;
+    if (view === "globe") {
+      setRotation([d.r[0] + dx * 0.32, Math.max(-90, Math.min(90, d.r[1] - dy * 0.32))]);
+    } else {
+      setPan([d.p[0] + dx / zoom, d.p[1] + dy / zoom]);
+    }
+  }
+  function onPointerUp(e?: React.PointerEvent) {
+    if (e) pointers.current.delete(e.pointerId);
+    if (pointers.current.size < 2) pinch.current = null;
+    drag.current = null;
+  }
+
+  const scaleTransform = `translate(${W / 2} ${H / 2}) scale(${zoom}) translate(${-W / 2} ${-H / 2})`;
+
   return (
-    <div className="relative w-full select-none overflow-hidden rounded-[var(--radius)]">
+    <div className="relative h-full w-full select-none overflow-hidden">
       <svg
         ref={svgRef}
         data-scratch-map=""
         viewBox={`0 0 ${W} ${H}`}
-        className="w-full touch-none"
+        preserveAspectRatio="xMidYMid slice"
+        className="h-full w-full touch-none"
         style={{ background: "var(--map-ocean)" }}
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}
         onPointerUp={onPointerUp}
+        onPointerCancel={onPointerUp}
         onPointerLeave={onPointerUp}
-        onWheel={(e) => {
-          if (view === "flat") setZoom((z) => Math.min(6, Math.max(1, z - e.deltaY * 0.002)));
-        }}
+        onWheel={(e) => setZoom((z) => Math.min(8, Math.max(1, z - e.deltaY * 0.002)))}
       >
         <g
           transform={
             view === "flat"
-              ? `translate(${W / 2 + pan[0]} ${H / 2 + pan[1]}) scale(${zoom}) translate(${-W / 2} ${-H / 2})`
-              : undefined
+              ? `translate(${W / 2 + pan[0] * zoom} ${H / 2 + pan[1] * zoom}) scale(${zoom}) translate(${-W / 2} ${-H / 2})`
+              : scaleTransform
           }
         >
+
           {view === "globe" && (
             <path
               d={path({ type: "Sphere" }) ?? undefined}
