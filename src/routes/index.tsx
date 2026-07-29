@@ -203,39 +203,22 @@ function App() {
             </div>
 
             {marked.length > 0 && (
-              <div className="space-y-2">
-                <span className="label-caps">Marked ({marked.length})</span>
-                <div className="flex flex-wrap gap-1.5">
-                  {marked.map(([code, s]) => (
-                    <button
-                      key={code}
-                      type="button"
-                      onClick={() => setSelected(code)}
-                      className="rounded-full border px-2.5 py-1 text-xs"
-                      style={{
-                        borderColor:
-                          s === "visited"
-                            ? "var(--map-visited)"
-                            : s === "lived"
-                              ? "var(--map-lived)"
-                              : "var(--map-wish)",
-                      }}
-                    >
-                      <span aria-hidden className="mr-1">
-                        {BY_CCA2[code]?.flag}
-                      </span>
-                      {BY_CCA2[code]?.name ?? code}
-                    </button>
-                  ))}
-                </div>
-              </div>
+              <button
+                type="button"
+                onClick={() => setTab("countries")}
+                className="w-full text-left text-xs text-muted-foreground underline underline-offset-4"
+              >
+                {marked.length} marked countr{marked.length === 1 ? "y" : "ies"} — view list
+              </button>
             )}
           </div>
         )}
 
+        {tab === "countries" && <CountriesPanel onSelect={setSelected} />}
         {tab === "journal" && <JournalPanel />}
         {tab === "stats" && <StatsPanel />}
         {tab === "guide" && <GuidePanel />}
+
       </main>
 
       <CountrySheet code={selected} onClose={() => setSelected(null)} />
