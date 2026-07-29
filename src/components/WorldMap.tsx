@@ -147,14 +147,14 @@ export function WorldMap({ view, onSelect, selected, pins }: Props) {
         onPointerLeave={onPointerUp}
         onWheel={(e) => setZoom((z) => Math.min(8, Math.max(1, z - e.deltaY * 0.002)))}
       >
-
         <g
           transform={
             view === "flat"
-              ? `translate(${W / 2 + pan[0]} ${H / 2 + pan[1]}) scale(${zoom}) translate(${-W / 2} ${-H / 2})`
-              : undefined
+              ? `translate(${W / 2 + pan[0] * zoom} ${H / 2 + pan[1] * zoom}) scale(${zoom}) translate(${-W / 2} ${-H / 2})`
+              : scaleTransform
           }
         >
+
           {view === "globe" && (
             <path
               d={path({ type: "Sphere" }) ?? undefined}
