@@ -49,14 +49,16 @@ export const Route = createFileRoute("/")({
   ),
 });
 
-type Tab = "map" | "journal" | "stats" | "guide";
+type Tab = "map" | "countries" | "journal" | "stats" | "guide";
 
 const TABS: { id: Tab; label: string; icon: typeof MapIcon }[] = [
   { id: "map", label: "Map", icon: MapIcon },
+  { id: "countries", label: "Countries", icon: Flag },
   { id: "journal", label: "Journal", icon: BookOpen },
   { id: "stats", label: "Stats", icon: Trophy },
   { id: "guide", label: "Guide", icon: LifeBuoy },
 ];
+
 
 const MAP_THEMES: MapTheme[] = ["atlas", "ocean", "forest", "mono"];
 
