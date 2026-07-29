@@ -88,7 +88,16 @@ export function WorldMap({ view, onSelect, selected, pins }: Props) {
     setRotation([-lon, -lat]);
   }, [selected, view]);
 
+  const statusFill = (cca2?: string) => {
+    const s: Status | undefined = cca2 ? statusByCountry[cca2] : undefined;
+    if (s === "visited") return "var(--map-visited)";
+    if (s === "wish") return "var(--map-wish)";
+    if (s === "lived") return "var(--map-lived)";
+    return "var(--map-land)";
+  };
+
   const pointers = useRef<Map<number, { x: number; y: number }>>(new Map());
+
   const pinch = useRef<{ dist: number; zoom: number } | null>(null);
 
   function onPointerDown(e: React.PointerEvent) {
