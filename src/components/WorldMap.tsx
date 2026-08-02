@@ -90,9 +90,13 @@ export function WorldMap({ onSelect, selected, pins }: Props) {
   const pointers = useRef<Map<number, { x: number; y: number }>>(new Map());
 
   const pinch = useRef<{ dist: number; zoom: number } | null>(null);
+  // set once a gesture turns into a drag/pinch so the trailing click event
+  // doesn't accidentally open the country under the release point
+  const moved = useRef(false);
 
   function onPointerDown(e: React.PointerEvent) {
     (e.target as Element).setPointerCapture?.(e.pointerId);
+    moved.current = false;
     pointers.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
     if (pointers.current.size === 2) {
       const [a, b] = [...pointers.current.values()];
