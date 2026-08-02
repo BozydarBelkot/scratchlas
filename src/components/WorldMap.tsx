@@ -110,6 +110,7 @@ export function WorldMap({ onSelect, selected, pins }: Props) {
     if (pointers.current.has(e.pointerId))
       pointers.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
     if (pinch.current && pointers.current.size >= 2) {
+      moved.current = true;
       const [a, b] = [...pointers.current.values()];
       const d = Math.hypot(a.x - b.x, a.y - b.y);
       const next = pinch.current.zoom * (d / (pinch.current.dist || 1));
@@ -121,6 +122,7 @@ export function WorldMap({ onSelect, selected, pins }: Props) {
     const dx = e.clientX - d.x;
     const dy = e.clientY - d.y;
     if (Math.abs(dx) + Math.abs(dy) < 3) return;
+    moved.current = true;
     // Keep the globe glued to the swipe: one pixel of drag covers fewer
     // degrees when zoomed in, so rotation sensitivity scales down with zoom.
     const k = 0.32 / d.z;
@@ -172,7 +174,11 @@ export function WorldMap({ onSelect, selected, pins }: Props) {
               fill={statusFill(p.cca2)}
               stroke={selected && p.cca2 === selected ? "var(--foreground)" : "var(--map-stroke)"}
               strokeWidth={selected && p.cca2 === selected ? 1.6 : 0.4}
-              onClick={() => p.cca2 && onSelect(p.cca2)}
+              onClick={() => {
+                const wasDrag = moved.current;
+                moved.current = false;
+                if (!wasDrag && p.cca2) onSelect(p.cca2);
+              }}
             >
               <title>{p.name}</title>
             </path>
