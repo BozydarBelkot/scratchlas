@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { geoEquirectangular, geoOrthographic, geoPath, geoGraticule10, geoCentroid, geoDistance } from "d3-geo";
+import { geoOrthographic, geoPath, geoGraticule10, geoCentroid, geoDistance } from "d3-geo";
 import { feature } from "topojson-client";
 import type { FeatureCollection, Feature, Geometry } from "geojson";
 import topo from "world-atlas/countries-110m.json";
@@ -16,29 +16,24 @@ const GRATICULE = geoGraticule10();
 
 const W = 880;
 const H = 470;
+const MIN_ZOOM = 1;
+const MAX_ZOOM = 8;
 
 interface Props {
-  view: "flat" | "globe";
   onSelect: (cca2: string) => void;
   selected?: string | null;
   pins: Place[];
 }
 
-export function WorldMap({ view, onSelect, selected, pins }: Props) {
+export function WorldMap({ onSelect, selected, pins }: Props) {
   const { statusByCountry, justMarked } = useStore();
   const [rotation, setRotation] = useState<[number, number]>([-10, -18]);
   const [zoom, setZoom] = useState(1);
-  const [pan, setPan] = useState<[number, number]>([0, 0]);
-  const drag = useRef<{ x: number; y: number; r: [number, number]; p: [number, number] } | null>(
-    null,
-  );
-  const svgRef = useRef<SVGSVGElement>(null);
+  const drag = useRef<{ x: number; y: number; r: [number, number]; z: number } | null>(null);
 
-  const size = view === "globe" ? Math.min(W, H) : W;
-
-  const projection = useMemo(() => {
-    if (view === "globe") {
-      return geoOrthographic()
+  const projection = useMemo(
+    () =>
+      geoOrthographic()
         .rotate([rotation[0], rotation[1]])
         .fitExtent(
           [
@@ -47,16 +42,9 @@ export function WorldMap({ view, onSelect, selected, pins }: Props) {
           ],
           { type: "Sphere" },
         )
-        .clipAngle(90);
-    }
-    return geoEquirectangular().fitExtent(
-      [
-        [8, 8],
-        [W - 8, H - 8],
-      ],
-      { type: "Sphere" },
-    );
-  }, [view, rotation, size]);
+        .clipAngle(90),
+    [rotation],
+  );
 
   const path = useMemo(() => geoPath(projection), [projection]);
 
@@ -64,16 +52,19 @@ export function WorldMap({ view, onSelect, selected, pins }: Props) {
     () =>
       FEATURES.map((f: Feature<Geometry, { name: string }>, i: number) => {
         const info = BY_CCN3[String(f.id).padStart(3, "0")];
-        return { id: `${f.id}-${i}`, cca2: info?.cca2, name: info?.name ?? f.properties?.name, d: path(f) };
+        return {
+          id: `${f.id}-${i}`,
+          cca2: info?.cca2,
+          name: info?.name ?? f.properties?.name,
+          d: path(f),
+        };
       }).filter((p) => p.d),
     [path],
   );
 
   const burst = useMemo(() => {
     if (!justMarked) return null;
-    const f = FEATURES.find(
-      (x) => BY_CCN3[String(x.id).padStart(3, "0")]?.cca2 === justMarked,
-    );
+    const f = FEATURES.find((x) => BY_CCN3[String(x.id).padStart(3, "0")]?.cca2 === justMarked);
     if (!f) return null;
     const c = projection(geoCentroid(f) as [number, number]);
     return c ? { x: c[0], y: c[1] } : null;
@@ -81,12 +72,12 @@ export function WorldMap({ view, onSelect, selected, pins }: Props) {
 
   // auto-rotate globe toward a newly selected country
   useEffect(() => {
-    if (view !== "globe" || !selected) return;
+    if (!selected) return;
     const f = FEATURES.find((x) => BY_CCN3[String(x.id).padStart(3, "0")]?.cca2 === selected);
     if (!f) return;
     const [lon, lat] = geoCentroid(f);
     setRotation([-lon, -lat]);
-  }, [selected, view]);
+  }, [selected]);
 
   const statusFill = (cca2?: string) => {
     const s: Status | undefined = cca2 ? statusByCountry[cca2] : undefined;
@@ -99,9 +90,13 @@ export function WorldMap({ view, onSelect, selected, pins }: Props) {
   const pointers = useRef<Map<number, { x: number; y: number }>>(new Map());
 
   const pinch = useRef<{ dist: number; zoom: number } | null>(null);
+  // set once a gesture turns into a drag/pinch so the trailing click event
+  // doesn't accidentally open the country under the release point
+  const moved = useRef(false);
 
   function onPointerDown(e: React.PointerEvent) {
     (e.target as Element).setPointerCapture?.(e.pointerId);
+    moved.current = false;
     pointers.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
     if (pointers.current.size === 2) {
       const [a, b] = [...pointers.current.values()];
@@ -109,16 +104,17 @@ export function WorldMap({ view, onSelect, selected, pins }: Props) {
       drag.current = null;
       return;
     }
-    drag.current = { x: e.clientX, y: e.clientY, r: rotation, p: pan };
+    drag.current = { x: e.clientX, y: e.clientY, r: rotation, z: zoom };
   }
   function onPointerMove(e: React.PointerEvent) {
     if (pointers.current.has(e.pointerId))
       pointers.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
     if (pinch.current && pointers.current.size >= 2) {
+      moved.current = true;
       const [a, b] = [...pointers.current.values()];
       const d = Math.hypot(a.x - b.x, a.y - b.y);
       const next = pinch.current.zoom * (d / (pinch.current.dist || 1));
-      setZoom(Math.min(8, Math.max(1, next)));
+      setZoom(Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, next)));
       return;
     }
     const d = drag.current;
@@ -126,11 +122,11 @@ export function WorldMap({ view, onSelect, selected, pins }: Props) {
     const dx = e.clientX - d.x;
     const dy = e.clientY - d.y;
     if (Math.abs(dx) + Math.abs(dy) < 3) return;
-    if (view === "globe") {
-      setRotation([d.r[0] + dx * 0.32, Math.max(-90, Math.min(90, d.r[1] - dy * 0.32))]);
-    } else {
-      setPan([d.p[0] + dx / zoom, d.p[1] + dy / zoom]);
-    }
+    moved.current = true;
+    // Keep the globe glued to the swipe: one pixel of drag covers fewer
+    // degrees when zoomed in, so rotation sensitivity scales down with zoom.
+    const k = 0.32 / d.z;
+    setRotation([d.r[0] + dx * k, Math.max(-90, Math.min(90, d.r[1] - dy * k))]);
   }
   function onPointerUp(e?: React.PointerEvent) {
     if (e) pointers.current.delete(e.pointerId);
@@ -143,7 +139,6 @@ export function WorldMap({ view, onSelect, selected, pins }: Props) {
   return (
     <div className="relative h-full w-full select-none overflow-hidden">
       <svg
-        ref={svgRef}
         data-scratch-map=""
         viewBox={`0 0 ${W} ${H}`}
         preserveAspectRatio="xMidYMid slice"
@@ -154,24 +149,17 @@ export function WorldMap({ view, onSelect, selected, pins }: Props) {
         onPointerUp={onPointerUp}
         onPointerCancel={onPointerUp}
         onPointerLeave={onPointerUp}
-        onWheel={(e) => setZoom((z) => Math.min(8, Math.max(1, z - e.deltaY * 0.002)))}
+        onWheel={(e) =>
+          setZoom((z) => Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, z * Math.exp(-e.deltaY * 0.0015))))
+        }
       >
-        <g
-          transform={
-            view === "flat"
-              ? `translate(${W / 2 + pan[0] * zoom} ${H / 2 + pan[1] * zoom}) scale(${zoom}) translate(${-W / 2} ${-H / 2})`
-              : scaleTransform
-          }
-        >
-
-          {view === "globe" && (
-            <path
-              d={path({ type: "Sphere" }) ?? undefined}
-              fill="var(--map-ocean)"
-              stroke="var(--map-stroke)"
-              strokeWidth={1}
-            />
-          )}
+        <g transform={scaleTransform}>
+          <path
+            d={path({ type: "Sphere" }) ?? undefined}
+            fill="var(--map-ocean)"
+            stroke="var(--map-stroke)"
+            strokeWidth={1}
+          />
           <path
             d={path(GRATICULE) ?? undefined}
             fill="none"
@@ -186,17 +174,18 @@ export function WorldMap({ view, onSelect, selected, pins }: Props) {
               fill={statusFill(p.cca2)}
               stroke={selected && p.cca2 === selected ? "var(--foreground)" : "var(--map-stroke)"}
               strokeWidth={selected && p.cca2 === selected ? 1.6 : 0.4}
-              onClick={() => p.cca2 && onSelect(p.cca2)}
+              onClick={() => {
+                const wasDrag = moved.current;
+                moved.current = false;
+                if (!wasDrag && p.cca2) onSelect(p.cca2);
+              }}
             >
               <title>{p.name}</title>
             </path>
           ))}
           {pins.map((pl) => {
             if (pl.lat == null || pl.lng == null) return null;
-            if (
-              view === "globe" &&
-              geoDistance([-rotation[0], -rotation[1]], [pl.lng, pl.lat]) > Math.PI / 2
-            )
+            if (geoDistance([-rotation[0], -rotation[1]], [pl.lng, pl.lat]) > Math.PI / 2)
               return null;
             const xy = projection([pl.lng, pl.lat]);
             if (!xy) return null;

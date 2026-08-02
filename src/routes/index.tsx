@@ -2,13 +2,13 @@ import { useMemo, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import {
   BookOpen,
-  Globe2,
   Map as MapIcon,
   Moon,
   Sun,
   Trophy,
   LifeBuoy,
   Flag,
+  LogOut,
 } from "lucide-react";
 import { StoreProvider, useStore, type MapTheme } from "@/lib/store";
 import { WorldMap } from "@/components/WorldMap";
@@ -17,9 +17,8 @@ import { CountriesPanel } from "@/components/CountriesPanel";
 import { JournalPanel } from "@/components/JournalPanel";
 import { StatsPanel } from "@/components/StatsPanel";
 import { GuidePanel } from "@/components/GuidePanel";
+import { AuthScreen } from "@/components/AuthScreen";
 import { Button } from "@/components/ui/button";
-
-
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -28,7 +27,7 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "Scratch off countries on a 2D map or 3D globe, log trips with photos, track passport stats and carry offline country reference data.",
+          "Scratch off countries on a 3D globe, log trips with photos, track passport stats and carry offline country reference data.",
       },
       { property: "og:title", content: "Scratchlas — Interactive Scratch Map & Travel Journal" },
       {
@@ -57,13 +56,11 @@ const TABS: { id: Tab; label: string; icon: typeof MapIcon }[] = [
   { id: "guide", label: "Guide", icon: LifeBuoy },
 ];
 
-
 const MAP_THEMES: MapTheme[] = ["atlas", "ocean", "forest", "mono"];
 
 function App() {
-  const { state, setMode, setMapTheme, ready } = useStore();
+  const { state, setMode, setMapTheme, ready, user, signOut } = useStore();
   const [tab, setTab] = useState<Tab>("map");
-  const [view, setView] = useState<"flat" | "globe">("flat");
   const [selected, setSelected] = useState<string | null>(null);
 
   const pins = useMemo(
@@ -71,35 +68,22 @@ function App() {
     [state.places],
   );
 
+  if (user === undefined) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-background">
+        <p className="animate-pulse font-display text-2xl text-muted-foreground">Scratchlas</p>
+      </div>
+    );
+  }
+  if (!user) return <AuthScreen />;
+
   const isMap = tab === "map";
 
   return (
     <div className="min-h-screen bg-background">
       {isMap ? (
         <main className="fixed inset-0 bottom-[58px]">
-          {ready && <WorldMap view={view} onSelect={setSelected} selected={selected} pins={pins} />}
-          <div className="pointer-events-none absolute inset-x-0 top-0 flex justify-end p-3">
-            <div className="pointer-events-auto flex rounded-full border border-border bg-background/85 p-1 backdrop-blur">
-              <button
-                type="button"
-                onClick={() => setView("flat")}
-                className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium transition-colors ${
-                  view === "flat" ? "bg-primary text-primary-foreground" : "text-muted-foreground"
-                }`}
-              >
-                <MapIcon className="size-3.5" /> Flat
-              </button>
-              <button
-                type="button"
-                onClick={() => setView("globe")}
-                className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium transition-colors ${
-                  view === "globe" ? "bg-primary text-primary-foreground" : "text-muted-foreground"
-                }`}
-              >
-                <Globe2 className="size-3.5" /> Globe
-              </button>
-            </div>
-          </div>
+          {ready && <WorldMap onSelect={setSelected} selected={selected} pins={pins} />}
         </main>
       ) : (
         <>
@@ -137,6 +121,14 @@ function App() {
                 >
                   {state.mode === "dark" ? <Sun className="size-4" /> : <Moon className="size-4" />}
                 </Button>
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  aria-label="Sign out"
+                  onClick={() => void signOut()}
+                >
+                  <LogOut className="size-4" />
+                </Button>
               </div>
             </div>
           </header>
@@ -172,4 +164,3 @@ function App() {
     </div>
   );
 }
-
