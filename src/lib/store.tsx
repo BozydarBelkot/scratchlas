@@ -11,7 +11,10 @@ import { supabase } from "@/integrations/supabase/client";
 import type { User } from "@supabase/supabase-js";
 
 export type Status = "visited" | "wish" | "lived";
-export type PlaceKind = "country" | "region" | "city" | "landmark";
+export type PlaceKind = "country" | "region" | "city" | "attraction";
+
+// Rows saved before the kinds were split may still say "landmark".
+const normalizeKind = (k: string): PlaceKind => (k === "landmark" ? "attraction" : (k as PlaceKind));
 
 export interface Media {
   id: string;
@@ -98,7 +101,7 @@ const from = (table: string): any => (supabase as any).from(table);
 const placeFromRow = (r: PlaceRow): Place => ({
   id: r.id,
   name: r.name,
-  kind: r.kind,
+  kind: normalizeKind(r.kind),
   country: r.country,
   status: r.status,
   lat: r.lat ?? undefined,
