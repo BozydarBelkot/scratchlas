@@ -1,48 +1,82 @@
-import { useState } from "react";
-import { Plus, X } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { useEffect, useMemo, useState } from "react";
+import { Building2, Check, Landmark, MapPinned, Search, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { ReferenceCard } from "@/components/ReferenceCard";
 import { MediaStrip } from "@/components/MediaStrip";
 import { BY_CCA2 } from "@/lib/countries";
-import { useStore, STATUS_LABEL, type PlaceKind, type Status } from "@/lib/store";
+import { loadCountryGeo, type CountryGeo, type GeoEntry } from "@/lib/geo-data";
+import { useStore, STATUS_LABEL, KIND_LABEL, type PlaceKind, type Status } from "@/lib/store";
 
 const STATUSES: Status[] = ["visited", "wish", "lived"];
-const KINDS: { value: PlaceKind; label: string }[] = [
-  { value: "region", label: "State / region" },
-  { value: "city", label: "City" },
-  { value: "landmark", label: "Landmark / POI" },
+
+type SubKind = Exclude<PlaceKind, "country">;
+
+const CATEGORIES: { id: SubKind; label: string; icon: typeof Building2 }[] = [
+  { id: "city", label: "Cities", icon: Building2 },
+  { id: "region", label: "Regions", icon: MapPinned },
+  { id: "attraction", label: "Attractions", icon: Landmark },
 ];
 
 export function CountrySheet({ code, onClose }: { code: string | null; onClose: () => void }) {
   const { state, statusByCountry, setCountryStatus, addPlace, removePlace } = useStore();
-  const [adding, setAdding] = useState(false);
-  const [form, setForm] = useState({
-    name: "",
-    kind: "city" as PlaceKind,
-    status: "visited" as Status,
-    lat: "",
-    lng: "",
-    date: "",
-    tripId: "",
-    notes: "",
-  });
+  const [tab, setTab] = useState<SubKind>("city");
+  const [addStatus, setAddStatus] = useState<Status>("visited");
+  const [q, setQ] = useState("");
+  const [geo, setGeo] = useState<CountryGeo | null>(null);
+
+  // Reset the picker whenever another country is opened.
+  useEffect(() => {
+    setTab("city");
+    setQ("");
+    setGeo(null);
+    if (!code) return;
+    let cancelled = false;
+    loadCountryGeo(code).then((g) => {
+      if (!cancelled) setGeo(g);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [code]);
 
   const c = code ? BY_CCA2[code] : null;
+
+  const sub = useMemo(
+    () => (c ? state.places.filter((p) => p.country === c.cca2 && p.kind !== "country") : []),
+    [state.places, c],
+  );
+
+  const entries: GeoEntry[] = useMemo(() => {
+    if (!geo) return [];
+    const list = tab === "city" ? geo.cities : tab === "region" ? geo.regions : geo.attractions;
+    const s = q.trim().toLowerCase();
+    return s ? list.filter((e) => e.name.toLowerCase().includes(s)) : list;
+  }, [geo, tab, q]);
+
   if (!c) return <Sheet open={false} onOpenChange={onClose} />;
 
   const current = statusByCountry[c.cca2];
-  const sub = state.places.filter((p) => p.country === c.cca2 && p.kind !== "country");
   const countryPlace = state.places.find((p) => p.country === c.cca2 && p.kind === "country");
+
+  const addedFor = (entry: GeoEntry) =>
+    sub.find((p) => p.kind === tab && p.name.toLowerCase() === entry.name.toLowerCase());
+
+  const toggleEntry = (entry: GeoEntry) => {
+    const existing = addedFor(entry);
+    if (existing) {
+      removePlace(existing.id);
+    } else {
+      addPlace({
+        name: entry.name,
+        kind: tab,
+        country: c.cca2,
+        status: addStatus,
+        lat: entry.lat,
+        lng: entry.lng,
+      });
+    }
+  };
 
   return (
     <Sheet open={!!code} onOpenChange={(o) => !o && onClose()}>
@@ -94,156 +128,147 @@ export function CountrySheet({ code, onClose }: { code: string | null; onClose: 
           </div>
         )}
 
-        <div className="mt-5 space-y-2">
-          <div className="flex items-center justify-between">
-            <span className="label-caps">Places in {c.name}</span>
-            <Button
-              size="sm"
-              variant="ghost"
-              className="h-7 gap-1 px-2 text-xs"
-              onClick={() => setAdding((v) => !v)}
-            >
-              {adding ? <X className="size-3.5" /> : <Plus className="size-3.5" />}
-              {adding ? "Cancel" : "Add"}
-            </Button>
+        <div className="mt-5 space-y-3">
+          <span className="label-caps">Places in {c.name}</span>
+
+          <div className="flex gap-1.5">
+            {CATEGORIES.map((cat) => (
+              <button
+                key={cat.id}
+                type="button"
+                onClick={() => {
+                  setTab(cat.id);
+                  setQ("");
+                }}
+                className={`flex flex-1 items-center justify-center gap-1.5 rounded-full border px-2 py-2 text-xs font-medium transition-colors ${
+                  tab === cat.id
+                    ? "border-transparent bg-primary text-primary-foreground"
+                    : "border-border text-muted-foreground hover:bg-accent"
+                }`}
+              >
+                <cat.icon className="size-3.5" />
+                {cat.label}
+              </button>
+            ))}
           </div>
 
-          {adding && (
-            <form
-              className="card-surface space-y-2 p-3"
-              onSubmit={(e) => {
-                e.preventDefault();
-                if (!form.name.trim()) return;
-                addPlace({
-                  name: form.name.trim(),
-                  kind: form.kind,
-                  country: c.cca2,
-                  status: form.status,
-                  lat: form.lat ? Number(form.lat) : c.latlng[0],
-                  lng: form.lng ? Number(form.lng) : c.latlng[1],
-                  date: form.date || undefined,
-                  tripId: form.tripId || undefined,
-                  notes: form.notes || undefined,
-                });
-                setForm({ ...form, name: "", lat: "", lng: "", notes: "" });
-                setAdding(false);
-              }}
-            >
-              <Input
-                placeholder="Place name (e.g. Kyoto, Machu Picchu)"
-                value={form.name}
-                onChange={(e) => setForm({ ...form, name: e.target.value })}
-              />
-              <div className="grid grid-cols-2 gap-2">
-                <Select
-                  value={form.kind}
-                  onValueChange={(v) => setForm({ ...form, kind: v as PlaceKind })}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {KINDS.map((k) => (
-                      <SelectItem key={k.value} value={k.value}>
-                        {k.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <Select
-                  value={form.status}
-                  onValueChange={(v) => setForm({ ...form, status: v as Status })}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {STATUSES.map((s) => (
-                      <SelectItem key={s} value={s}>
-                        {STATUS_LABEL[s]}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="grid grid-cols-2 gap-2">
-                <Input
-                  placeholder="Latitude"
-                  inputMode="decimal"
-                  value={form.lat}
-                  onChange={(e) => setForm({ ...form, lat: e.target.value })}
-                />
-                <Input
-                  placeholder="Longitude"
-                  inputMode="decimal"
-                  value={form.lng}
-                  onChange={(e) => setForm({ ...form, lng: e.target.value })}
-                />
-              </div>
-              <div className="grid grid-cols-2 gap-2">
-                <Input
-                  type="date"
-                  value={form.date}
-                  onChange={(e) => setForm({ ...form, date: e.target.value })}
-                />
-                <Select
-                  value={form.tripId || "none"}
-                  onValueChange={(v) => setForm({ ...form, tripId: v === "none" ? "" : v })}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Trip" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="none">No trip</SelectItem>
-                    {state.trips.map((t) => (
-                      <SelectItem key={t.id} value={t.id}>
-                        {t.title}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <Textarea
-                placeholder="Notes"
-                rows={2}
-                value={form.notes}
-                onChange={(e) => setForm({ ...form, notes: e.target.value })}
-              />
-              <Button type="submit" className="w-full">
-                Save place
-              </Button>
-            </form>
-          )}
-
-          {sub.length === 0 && !adding && (
-            <p className="text-xs text-muted-foreground">
-              Nothing pinned yet inside this country.
-            </p>
-          )}
-
-          {sub.map((p) => (
-            <div key={p.id} className="card-surface space-y-2 p-3">
-              <div className="flex items-start justify-between gap-2">
-                <div>
-                  <div className="text-sm font-medium">{p.name}</div>
-                  <div className="text-xs text-muted-foreground">
-                    {p.kind} · {STATUS_LABEL[p.status]}
-                    {p.date ? ` · ${p.date}` : ""}
-                  </div>
-                  {p.notes && <p className="mt-1 text-xs text-muted-foreground">{p.notes}</p>}
-                </div>
+          <div className="flex items-center gap-2">
+            <span className="shrink-0 text-xs text-muted-foreground">Add as</span>
+            <div className="flex gap-1">
+              {STATUSES.map((s) => (
                 <button
+                  key={s}
                   type="button"
-                  aria-label={`Remove ${p.name}`}
-                  onClick={() => removePlace(p.id)}
-                  className="text-muted-foreground hover:text-destructive"
+                  onClick={() => setAddStatus(s)}
+                  className={`rounded-full border px-2.5 py-1 text-[11px] font-medium transition-colors ${
+                    addStatus === s
+                      ? "border-transparent text-background"
+                      : "border-border text-muted-foreground hover:bg-accent"
+                  }`}
+                  style={
+                    addStatus === s
+                      ? {
+                          background:
+                            s === "visited"
+                              ? "var(--map-visited)"
+                              : s === "wish"
+                                ? "var(--map-wish)"
+                                : "var(--map-lived)",
+                        }
+                      : undefined
+                  }
                 >
-                  <X className="size-4" />
+                  {STATUS_LABEL[s]}
                 </button>
-              </div>
-              <MediaStrip place={p} />
+              ))}
             </div>
-          ))}
+          </div>
+
+          <div className="relative">
+            <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              value={q}
+              onChange={(e) => setQ(e.target.value)}
+              placeholder={`Search ${CATEGORIES.find((x) => x.id === tab)?.label.toLowerCase()} in ${c.name}`}
+              className="h-9 pl-9"
+            />
+          </div>
+
+          {!geo ? (
+            <p className="py-4 text-center text-xs text-muted-foreground">Loading places…</p>
+          ) : entries.length === 0 ? (
+            <p className="py-4 text-center text-xs text-muted-foreground">
+              {q ? `No match for “${q}”.` : `No ${tab}s listed for ${c.name} yet.`}
+            </p>
+          ) : (
+            <div className="card-surface max-h-56 divide-y divide-border overflow-y-auto">
+              {entries.map((e) => {
+                const added = addedFor(e);
+                return (
+                  <button
+                    key={e.name}
+                    type="button"
+                    onClick={() => toggleEntry(e)}
+                    className="flex w-full items-center gap-2 px-3 py-2.5 text-left text-sm transition-colors hover:bg-accent"
+                  >
+                    <span
+                      className={`flex size-5 shrink-0 items-center justify-center rounded-full border transition-colors ${
+                        added ? "border-transparent text-background" : "border-border"
+                      }`}
+                      style={
+                        added
+                          ? {
+                              background:
+                                added.status === "visited"
+                                  ? "var(--map-visited)"
+                                  : added.status === "wish"
+                                    ? "var(--map-wish)"
+                                    : "var(--map-lived)",
+                            }
+                          : undefined
+                      }
+                    >
+                      {added && <Check className="size-3" />}
+                    </span>
+                    <span className="min-w-0 flex-1 truncate">{e.name}</span>
+                    {added && (
+                      <span className="shrink-0 text-[11px] text-muted-foreground">
+                        {STATUS_LABEL[added.status]}
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          )}
+
+          {sub.length > 0 && (
+            <div className="space-y-2 pt-1">
+              {sub.map((p) => (
+                <div key={p.id} className="card-surface space-y-2 p-3">
+                  <div className="flex items-start justify-between gap-2">
+                    <div>
+                      <div className="text-sm font-medium">{p.name}</div>
+                      <div className="text-xs text-muted-foreground">
+                        {KIND_LABEL[p.kind]} · {STATUS_LABEL[p.status]}
+                        {p.date ? ` · ${p.date}` : ""}
+                      </div>
+                      {p.notes && <p className="mt-1 text-xs text-muted-foreground">{p.notes}</p>}
+                    </div>
+                    <button
+                      type="button"
+                      aria-label={`Remove ${p.name}`}
+                      onClick={() => removePlace(p.id)}
+                      className="text-muted-foreground hover:text-destructive"
+                    >
+                      <X className="size-4" />
+                    </button>
+                  </div>
+                  <MediaStrip place={p} />
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         <div className="mt-5 space-y-2">
