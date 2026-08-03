@@ -154,7 +154,11 @@ const logErr =
 function loadLocal(): AppState {
   try {
     const raw = localStorage.getItem(KEY);
-    if (raw) return { ...EMPTY, ...JSON.parse(raw) };
+    if (raw) {
+      const parsed = { ...EMPTY, ...JSON.parse(raw) } as AppState;
+      parsed.places = parsed.places.map((p) => ({ ...p, kind: normalizeKind(p.kind) }));
+      return parsed;
+    }
     const prefersDark = window.matchMedia?.("(prefers-color-scheme: dark)").matches;
     return { ...EMPTY, mode: prefersDark ? "dark" : "light" };
   } catch {
@@ -464,4 +468,11 @@ export const STATUS_LABEL: Record<Status, string> = {
   visited: "Visited",
   wish: "Wish list",
   lived: "Lived here",
+};
+
+export const KIND_LABEL: Record<PlaceKind, string> = {
+  country: "Country",
+  region: "Region",
+  city: "City",
+  attraction: "Attraction",
 };
