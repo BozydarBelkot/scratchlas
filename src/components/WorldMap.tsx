@@ -3,7 +3,7 @@ import { geoOrthographic, geoPath, geoGraticule10, geoCentroid, geoDistance } fr
 import { feature } from "topojson-client";
 import type { FeatureCollection, Feature, Geometry } from "geojson";
 import topo from "world-atlas/countries-110m.json";
-import { BY_CCN3 } from "@/lib/countries";
+import { BY_CCA2, BY_CCN3, COUNTRIES } from "@/lib/countries";
 import { useStore, type Place, type Status } from "@/lib/store";
 
 const world = feature(
@@ -13,6 +13,11 @@ const world = feature(
 
 const FEATURES = world.features;
 const GRATICULE = geoGraticule10();
+
+// Microstates (Vatican, San Marino, Monaco…) are too small for the 110m
+// geometry — render them as tappable dots at their capital coordinates.
+const PRESENT_CCN3 = new Set(FEATURES.map((f) => String(f.id).padStart(3, "0")));
+const MICROSTATES = COUNTRIES.filter((c) => !PRESENT_CCN3.has(c.ccn3));
 
 const W = 880;
 const H = 470;
@@ -65,8 +70,13 @@ export function WorldMap({ onSelect, selected, pins }: Props) {
   const burst = useMemo(() => {
     if (!justMarked) return null;
     const f = FEATURES.find((x) => BY_CCN3[String(x.id).padStart(3, "0")]?.cca2 === justMarked);
-    if (!f) return null;
-    const c = projection(geoCentroid(f) as [number, number]);
+    const ll: [number, number] | null = f
+      ? (geoCentroid(f) as [number, number])
+      : BY_CCA2[justMarked]
+        ? [BY_CCA2[justMarked].latlng[1], BY_CCA2[justMarked].latlng[0]]
+        : null;
+    if (!ll) return null;
+    const c = projection(ll);
     return c ? { x: c[0], y: c[1] } : null;
   }, [justMarked, projection]);
 
@@ -74,9 +84,13 @@ export function WorldMap({ onSelect, selected, pins }: Props) {
   useEffect(() => {
     if (!selected) return;
     const f = FEATURES.find((x) => BY_CCN3[String(x.id).padStart(3, "0")]?.cca2 === selected);
-    if (!f) return;
-    const [lon, lat] = geoCentroid(f);
-    setRotation([-lon, -lat]);
+    if (f) {
+      const [lon, lat] = geoCentroid(f);
+      setRotation([-lon, -lat]);
+    } else {
+      const info = BY_CCA2[selected];
+      if (info) setRotation([-info.latlng[1], -info.latlng[0]]);
+    }
   }, [selected]);
 
   const statusFill = (cca2?: string) => {
@@ -183,6 +197,37 @@ export function WorldMap({ onSelect, selected, pins }: Props) {
               <title>{p.name}</title>
             </path>
           ))}
+          {MICROSTATES.map((m) => {
+            const [lat, lng] = m.latlng;
+            if (geoDistance([-rotation[0], -rotation[1]], [lng, lat]) > Math.PI / 2) return null;
+            const xy = projection([lng, lat]);
+            if (!xy) return null;
+            return (
+              <g
+                key={m.cca2}
+                className="country-shape"
+                style={{ cursor: "pointer" }}
+                onClick={() => {
+                  const wasDrag = moved.current;
+                  moved.current = false;
+                  if (!wasDrag) onSelect(m.cca2);
+                }}
+              >
+                <circle cx={xy[0]} cy={xy[1]} r={9 / zoom} fill="transparent" />
+                <circle
+                  cx={xy[0]}
+                  cy={xy[1]}
+                  r={3.2 / zoom}
+                  fill={statusFill(m.cca2)}
+                  stroke={
+                    selected === m.cca2 ? "var(--foreground)" : "var(--map-stroke)"
+                  }
+                  strokeWidth={(selected === m.cca2 ? 1.4 : 0.7) / zoom}
+                />
+                <title>{m.name}</title>
+              </g>
+            );
+          })}
           {pins.map((pl) => {
             if (pl.lat == null || pl.lng == null) return null;
             if (geoDistance([-rotation[0], -rotation[1]], [pl.lng, pl.lat]) > Math.PI / 2)
