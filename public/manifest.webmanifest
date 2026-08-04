@@ -1,0 +1,17 @@
+{
+  "name": "Scratchlas",
+  "short_name": "Scratchlas",
+  "description": "Scratch off the world: mark countries, cities and landmarks, log trips and carry offline country data.",
+  "id": "/",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#00122c",
+  "theme_color": "#00122c",
+  "icons": [
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
