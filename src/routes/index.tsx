@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import {
   BookOpen,
@@ -18,6 +18,8 @@ import { JournalPanel } from "@/components/JournalPanel";
 import { StatsPanel } from "@/components/StatsPanel";
 import { GuidePanel } from "@/components/GuidePanel";
 import { AuthScreen } from "@/components/AuthScreen";
+import { OnboardingIntro } from "@/components/OnboardingIntro";
+import { SplashScreen } from "@/components/SplashScreen";
 import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/")({
@@ -58,23 +60,60 @@ const TABS: { id: Tab; label: string; icon: typeof MapIcon }[] = [
 
 const MAP_THEMES: MapTheme[] = ["atlas", "ocean", "forest", "mono"];
 
+const ONBOARDED_KEY = "scratchlas.onboarded.v1";
+// Users with pre-onboarding saved data skip the intro on their next launch.
+const LEGACY_STORE_KEY = "scratchmap.v1";
+
+type LaunchPhase = "boot" | "intro" | "splash" | "splash-out" | "app";
+
 function App() {
   const { state, setMode, setMapTheme, ready, user, signOut } = useStore();
   const [tab, setTab] = useState<Tab>("map");
   const [selected, setSelected] = useState<string | null>(null);
+  const [phase, setPhase] = useState<LaunchPhase>("boot");
+
+  useEffect(() => {
+    let seen = false;
+    try {
+      seen =
+        window.localStorage.getItem(ONBOARDED_KEY) === "1" ||
+        window.localStorage.getItem(LEGACY_STORE_KEY) !== null;
+    } catch {
+      seen = false;
+    }
+    setPhase(seen ? "splash" : "intro");
+  }, []);
+
+  useEffect(() => {
+    if (phase === "splash") {
+      const t = window.setTimeout(() => setPhase("splash-out"), 1600);
+      return () => window.clearTimeout(t);
+    }
+    if (phase === "splash-out") {
+      const t = window.setTimeout(() => setPhase("app"), 420);
+      return () => window.clearTimeout(t);
+    }
+  }, [phase]);
+
+  function completeIntro() {
+    try {
+      window.localStorage.setItem(ONBOARDED_KEY, "1");
+    } catch {
+      // Storage unavailable (private mode): intro will show again next launch.
+    }
+    setPhase("app");
+  }
 
   const pins = useMemo(
     () => state.places.filter((p) => p.kind !== "country" && p.lat != null),
     [state.places],
   );
 
-  if (user === undefined) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-background">
-        <p className="animate-pulse font-display text-2xl text-muted-foreground">Scratchlas</p>
-      </div>
-    );
-  }
+  if (phase === "boot" || phase === "splash") return <SplashScreen />;
+  if (phase === "splash-out") return <SplashScreen leaving />;
+  if (phase === "intro") return <OnboardingIntro onDone={completeIntro} />;
+
+  if (user === undefined) return <SplashScreen />;
   if (!user) return <AuthScreen />;
 
   const isMap = tab === "map";
