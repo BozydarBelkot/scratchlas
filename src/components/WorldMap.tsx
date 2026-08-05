@@ -240,18 +240,35 @@ export function WorldMap({ onSelect, selected, pins }: Props) {
                 : pl.status === "wish"
                   ? "var(--map-wish)"
                   : "var(--map-lived)";
-            return (
-              <g key={pl.id}>
-                <circle cx={xy[0]} cy={xy[1]} r={4.5} fill={color} opacity={0.25} />
-                <circle
-                  cx={xy[0]}
-                  cy={xy[1]}
-                  r={2}
+            // Markers keep a constant on-screen size at any zoom (radii are
+            // divided by zoom) and use a contrasting outline so they stay
+            // visible on top of a same-colored country fill.
+            if (pl.kind === "attraction") {
+              const r = 3.6 / zoom;
+              return (
+                <path
+                  key={pl.id}
+                  d={`M ${xy[0]} ${xy[1] - r} L ${xy[0] + r} ${xy[1]} L ${xy[0]} ${xy[1] + r} L ${xy[0] - r} ${xy[1]} Z`}
                   fill={color}
                   stroke="var(--card)"
-                  strokeWidth={0.6}
-                />
-              </g>
+                  strokeWidth={1.2 / zoom}
+                >
+                  <title>{pl.name}</title>
+                </path>
+              );
+            }
+            return (
+              <circle
+                key={pl.id}
+                cx={xy[0]}
+                cy={xy[1]}
+                r={2.4 / zoom}
+                fill={color}
+                stroke="var(--card)"
+                strokeWidth={1.3 / zoom}
+              >
+                <title>{pl.name}</title>
+              </circle>
             );
           })}
           {burst && (
