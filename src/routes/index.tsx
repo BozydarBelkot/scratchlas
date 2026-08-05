@@ -74,7 +74,7 @@ function App() {
     if (!demo) return real;
     return [
       ...real,
-      { id: "demo1", name: "Rome", kind: "city", country: "IT", status: "visited", lat: 41.893, lng: 12.483, media: [], createdAt: 0 },
+      { id: "demo1", name: "Rome", kind: "city", country: "IT", status: "visited", lat: 40.85, lng: 14.27, media: [], createdAt: 0 },
       { id: "demo2", name: "Lazio", kind: "region", country: "IT", status: "lived", lat: 42.4, lng: 12.6, media: [], createdAt: 0 },
       { id: "demo3", name: "Colosseum", kind: "attraction", country: "IT", status: "wish", lat: 41.89, lng: 12.492, media: [], createdAt: 0 },
       { id: "demo4", name: "Paris", kind: "city", country: "FR", status: "visited", lat: 48.857, lng: 2.352, media: [], createdAt: 0 },
