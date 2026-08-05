@@ -88,7 +88,7 @@ function App() {
       </div>
     );
   }
-  if (!user) return <AuthScreen />;
+  if (!user && !demo) return <AuthScreen />; // TEMP-DEMO
 
   const isMap = tab === "map";
 
