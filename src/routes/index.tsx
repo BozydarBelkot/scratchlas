@@ -61,14 +61,27 @@ const MAP_THEMES: MapTheme[] = ["atlas", "ocean", "forest", "mono"];
 function App() {
   const { state, setMode, setMapTheme, ready, user, signOut } = useStore();
   const [tab, setTab] = useState<Tab>("map");
-  const [selected, setSelected] = useState<string | null>(null);
-
-  const pins = useMemo(
-    () => state.places.filter((p) => p.kind !== "country" && p.lat != null),
-    [state.places],
+  // TEMP-DEMO (revert after visual verification)
+  const demo = typeof window !== "undefined" && new URLSearchParams(window.location.search).has("demo");
+  const [selected, setSelected] = useState<string | null>(
+    typeof window !== "undefined" && new URLSearchParams(window.location.search).get("demo") === "sheet"
+      ? "IT"
+      : null,
   );
 
-  if (user === undefined) {
+  const pins = useMemo(() => {
+    const real = state.places.filter((p) => p.kind !== "country" && p.lat != null);
+    if (!demo) return real;
+    return [
+      ...real,
+      { id: "demo1", name: "Rome", kind: "city", country: "IT", status: "visited", lat: 41.893, lng: 12.483, media: [], createdAt: 0 },
+      { id: "demo2", name: "Lazio", kind: "region", country: "IT", status: "lived", lat: 42.4, lng: 12.6, media: [], createdAt: 0 },
+      { id: "demo3", name: "Colosseum", kind: "attraction", country: "IT", status: "wish", lat: 41.89, lng: 12.492, media: [], createdAt: 0 },
+      { id: "demo4", name: "Paris", kind: "city", country: "FR", status: "visited", lat: 48.857, lng: 2.352, media: [], createdAt: 0 },
+    ] as typeof real;
+  }, [state.places, demo]);
+
+  if (user === undefined && !demo) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background">
         <p className="animate-pulse font-display text-2xl text-muted-foreground">Scratchlas</p>
