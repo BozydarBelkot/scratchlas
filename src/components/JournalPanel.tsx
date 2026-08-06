@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { BY_CCA2 } from "@/lib/countries";
-import { BY_CCA2 } from "@/lib/countries";
 import { useStore, STATUS_LABEL, type Place } from "@/lib/store";
 
 function PlaceRow({ p }: { p: Place }) {
@@ -25,7 +24,6 @@ function PlaceRow({ p }: { p: Place }) {
         {p.date ? ` · ${new Date(p.date).toLocaleDateString()}` : ""}
       </div>
       {p.notes && <p className="text-xs text-muted-foreground">{p.notes}</p>}
-      <MediaStrip place={p} />
     </div>
   );
 }
