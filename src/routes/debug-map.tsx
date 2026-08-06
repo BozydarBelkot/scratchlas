@@ -13,10 +13,11 @@ const demoPins: Place[] = [
 ];
 
 export const Route = createFileRoute("/debug-map")({
+  // selected="IT" makes the globe auto-rotate to center Italy on mount.
   component: () => (
     <StoreProvider>
       <div className="fixed inset-0">
-        <WorldMap onSelect={() => {}} pins={demoPins} />
+        <WorldMap onSelect={() => {}} selected="IT" pins={demoPins} />
       </div>
     </StoreProvider>
   ),
