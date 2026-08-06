@@ -12,7 +12,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { ReferenceCard } from "@/components/ReferenceCard";
-import { MediaStrip } from "@/components/MediaStrip";
 import { BY_CCA2 } from "@/lib/countries";
 import { loadCountryGeo, type CountryGeo, type GeoEntry } from "@/lib/geo-data";
 import { useStore, STATUS_LABEL, KIND_LABEL, type PlaceKind, type Status } from "@/lib/store";
@@ -72,7 +71,6 @@ export function CountrySheet({ code, onClose }: { code: string | null; onClose: 
   if (!c) return <Sheet open={false} onOpenChange={onClose} />;
 
   const current = statusByCountry[c.cca2];
-  const countryPlace = state.places.find((p) => p.country === c.cca2 && p.kind === "country");
 
   const addedFor = (entry: GeoEntry) =>
     sub.find((p) => p.kind === tab && p.name.toLowerCase() === entry.name.toLowerCase());
@@ -125,12 +123,6 @@ export function CountrySheet({ code, onClose }: { code: string | null; onClose: 
             </button>
           ))}
         </div>
-
-        {countryPlace && (
-          <div className="mt-4">
-            <MediaStrip place={countryPlace} />
-          </div>
-        )}
 
         <div className="mt-4 grid grid-cols-2 gap-1 rounded-full border border-border p-1">
           {(
@@ -278,7 +270,6 @@ export function CountrySheet({ code, onClose }: { code: string | null; onClose: 
                         <X className="size-4" />
                       </button>
                     </div>
-                    <MediaStrip place={p} />
                   </div>
                 ))}
               </div>

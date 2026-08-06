@@ -23,6 +23,9 @@ const W = 880;
 const H = 470;
 const MIN_ZOOM = 1;
 const MAX_ZOOM = 8;
+// Place markers and their name labels stay hidden until the user zooms in
+// close to country level, then fade in.
+const PIN_ZOOM = 2.5;
 
 interface Props {
   onSelect: (cca2: string) => void;
@@ -172,13 +175,13 @@ export function WorldMap({ onSelect, selected, pins }: Props) {
             d={path({ type: "Sphere" }) ?? undefined}
             fill="var(--map-ocean)"
             stroke="var(--map-stroke)"
-            strokeWidth={1}
+            strokeWidth={1 / zoom}
           />
           <path
             d={path(GRATICULE) ?? undefined}
             fill="none"
             stroke="var(--map-grid)"
-            strokeWidth={0.5}
+            strokeWidth={0.5 / zoom}
           />
           {paths.map((p) => (
             <path
@@ -187,7 +190,7 @@ export function WorldMap({ onSelect, selected, pins }: Props) {
               className="country-shape"
               fill={statusFill(p.cca2)}
               stroke={selected && p.cca2 === selected ? "var(--foreground)" : "var(--map-stroke)"}
-              strokeWidth={selected && p.cca2 === selected ? 1.6 : 0.4}
+              strokeWidth={(selected && p.cca2 === selected ? 1.6 : 0.4) / zoom}
               onClick={() => {
                 const wasDrag = moved.current;
                 moved.current = false;
@@ -228,49 +231,90 @@ export function WorldMap({ onSelect, selected, pins }: Props) {
               </g>
             );
           })}
-          {pins.map((pl) => {
-            if (pl.lat == null || pl.lng == null) return null;
-            if (geoDistance([-rotation[0], -rotation[1]], [pl.lng, pl.lat]) > Math.PI / 2)
-              return null;
-            const xy = projection([pl.lng, pl.lat]);
-            if (!xy) return null;
-            const color =
-              pl.status === "visited"
-                ? "var(--map-visited)"
-                : pl.status === "wish"
-                  ? "var(--map-wish)"
-                  : "var(--map-lived)";
-            // Markers keep a constant on-screen size at any zoom (radii are
-            // divided by zoom) and use a contrasting outline so they stay
-            // visible on top of a same-colored country fill.
-            if (pl.kind === "attraction") {
-              const r = 3.6 / zoom;
-              return (
-                <path
-                  key={pl.id}
-                  d={`M ${xy[0]} ${xy[1] - r} L ${xy[0] + r} ${xy[1]} L ${xy[0]} ${xy[1] + r} L ${xy[0] - r} ${xy[1]} Z`}
-                  fill={color}
+          <g
+            aria-hidden={zoom < PIN_ZOOM}
+            style={{
+              opacity: zoom >= PIN_ZOOM ? 1 : 0,
+              transition: "opacity 200ms ease",
+              pointerEvents: "none",
+            }}
+          >
+            {pins.map((pl) => {
+              if (pl.lat == null || pl.lng == null) return null;
+              if (geoDistance([-rotation[0], -rotation[1]], [pl.lng, pl.lat]) > Math.PI / 2)
+                return null;
+              const xy = projection([pl.lng, pl.lat]);
+              if (!xy) return null;
+              const color =
+                pl.status === "visited"
+                  ? "var(--map-visited)"
+                  : pl.status === "wish"
+                    ? "var(--map-wish)"
+                    : "var(--map-lived)";
+              // Markers and labels keep a constant on-screen size at any zoom
+              // (dimensions are divided by zoom) and use a contrasting
+              // outline/halo so they stay readable on a same-colored country.
+              const label = (r: number) => (
+                <text
+                  x={xy[0]}
+                  y={xy[1] + (r + 8.6) / zoom}
+                  textAnchor="middle"
+                  fontSize={9 / zoom}
+                  fontWeight={500}
+                  fill="var(--foreground)"
                   stroke="var(--card)"
-                  strokeWidth={1.2 / zoom}
+                  strokeWidth={2.4 / zoom}
+                  paintOrder="stroke"
                 >
-                  <title>{pl.name}</title>
-                </path>
+                  {pl.name}
+                </text>
               );
-            }
-            return (
-              <circle
-                key={pl.id}
-                cx={xy[0]}
-                cy={xy[1]}
-                r={2.4 / zoom}
-                fill={color}
-                stroke="var(--card)"
-                strokeWidth={1.3 / zoom}
-              >
-                <title>{pl.name}</title>
-              </circle>
-            );
-          })}
+              if (pl.kind === "attraction") {
+                const r = 3.6 / zoom;
+                return (
+                  <g key={pl.id}>
+                    <path
+                      d={`M ${xy[0]} ${xy[1] - r} L ${xy[0] + r} ${xy[1]} L ${xy[0]} ${xy[1] + r} L ${xy[0] - r} ${xy[1]} Z`}
+                      fill={color}
+                      stroke="var(--card)"
+                      strokeWidth={1.2 / zoom}
+                    />
+                    {label(3.6)}
+                    <title>{pl.name}</title>
+                  </g>
+                );
+              }
+              if (pl.kind === "region") {
+                const r = 3.2 / zoom;
+                return (
+                  <g key={pl.id}>
+                    <path
+                      d={`M ${xy[0]} ${xy[1] - r} L ${xy[0] + r * 0.9} ${xy[1] + r * 0.75} L ${xy[0] - r * 0.9} ${xy[1] + r * 0.75} Z`}
+                      fill={color}
+                      stroke="var(--card)"
+                      strokeWidth={1.2 / zoom}
+                    />
+                    {label(3.2)}
+                    <title>{pl.name}</title>
+                  </g>
+                );
+              }
+              return (
+                <g key={pl.id}>
+                  <circle
+                    cx={xy[0]}
+                    cy={xy[1]}
+                    r={2.4 / zoom}
+                    fill={color}
+                    stroke="var(--card)"
+                    strokeWidth={1.3 / zoom}
+                  />
+                  {label(2.4)}
+                  <title>{pl.name}</title>
+                </g>
+              );
+            })}
+          </g>
           {burst && (
             <circle
               className="scratch-burst"
