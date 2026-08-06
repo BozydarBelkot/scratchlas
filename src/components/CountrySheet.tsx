@@ -12,7 +12,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { ReferenceCard } from "@/components/ReferenceCard";
-import { MediaStrip } from "@/components/MediaStrip";
+import { BY_CCA2 } from "@/lib/countries";
 import { BY_CCA2 } from "@/lib/countries";
 import { loadCountryGeo, type CountryGeo, type GeoEntry } from "@/lib/geo-data";
 import { useStore, STATUS_LABEL, KIND_LABEL, type PlaceKind, type Status } from "@/lib/store";
