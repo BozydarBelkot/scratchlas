@@ -175,13 +175,13 @@ export function WorldMap({ onSelect, selected, pins }: Props) {
             d={path({ type: "Sphere" }) ?? undefined}
             fill="var(--map-ocean)"
             stroke="var(--map-stroke)"
-            strokeWidth={1}
+            strokeWidth={1 / zoom}
           />
           <path
             d={path(GRATICULE) ?? undefined}
             fill="none"
             stroke="var(--map-grid)"
-            strokeWidth={0.5}
+            strokeWidth={0.5 / zoom}
           />
           {paths.map((p) => (
             <path
@@ -190,7 +190,7 @@ export function WorldMap({ onSelect, selected, pins }: Props) {
               className="country-shape"
               fill={statusFill(p.cca2)}
               stroke={selected && p.cca2 === selected ? "var(--foreground)" : "var(--map-stroke)"}
-              strokeWidth={selected && p.cca2 === selected ? 1.6 : 0.4}
+              strokeWidth={(selected && p.cca2 === selected ? 1.6 : 0.4) / zoom}
               onClick={() => {
                 const wasDrag = moved.current;
                 moved.current = false;
