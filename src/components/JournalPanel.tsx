@@ -3,7 +3,7 @@ import { CalendarDays, Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { MediaStrip } from "@/components/MediaStrip";
+import { BY_CCA2 } from "@/lib/countries";
 import { BY_CCA2 } from "@/lib/countries";
 import { useStore, STATUS_LABEL, type Place } from "@/lib/store";
 
