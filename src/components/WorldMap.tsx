@@ -22,18 +22,25 @@ const MICROSTATES = COUNTRIES.filter((c) => !PRESENT_CCN3.has(c.ccn3));
 const W = 880;
 const H = 470;
 const MIN_ZOOM = 1;
-const MAX_ZOOM = 8;
+// World mode keeps zooming shallow (country overview); Places mode allows
+// much deeper zooming so dense city/attraction pins can be told apart.
+const MAX_ZOOM_WORLD = 8;
+const MAX_ZOOM_PLACES = 30;
 // Place markers and their name labels stay hidden until the user zooms in
 // close to country level, then fade in.
 const PIN_ZOOM = 2.5;
+
+export type MapMode = "world" | "places";
 
 interface Props {
   onSelect: (cca2: string) => void;
   selected?: string | null;
   pins: Place[];
+  mode: MapMode;
 }
 
-export function WorldMap({ onSelect, selected, pins }: Props) {
+export function WorldMap({ onSelect, selected, pins, mode }: Props) {
+  const maxZoom = mode === "places" ? MAX_ZOOM_PLACES : MAX_ZOOM_WORLD;
   const { statusByCountry, justMarked } = useStore();
   const [rotation, setRotation] = useState<[number, number]>([-10, -18]);
   const [zoom, setZoom] = useState(1);
@@ -96,6 +103,11 @@ export function WorldMap({ onSelect, selected, pins }: Props) {
     }
   }, [selected]);
 
+  // Switching back to World mode clamps any deeper Places-mode zoom.
+  useEffect(() => {
+    if (mode === "world") setZoom((z) => Math.min(z, MAX_ZOOM_WORLD));
+  }, [mode]);
+
   const statusFill = (cca2?: string) => {
     const s: Status | undefined = cca2 ? statusByCountry[cca2] : undefined;
     if (s === "visited") return "var(--map-visited)";
@@ -131,7 +143,7 @@ export function WorldMap({ onSelect, selected, pins }: Props) {
       const [a, b] = [...pointers.current.values()];
       const d = Math.hypot(a.x - b.x, a.y - b.y);
       const next = pinch.current.zoom * (d / (pinch.current.dist || 1));
-      setZoom(Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, next)));
+      setZoom(Math.min(maxZoom, Math.max(MIN_ZOOM, next)));
       return;
     }
     const d = drag.current;
@@ -167,7 +179,7 @@ export function WorldMap({ onSelect, selected, pins }: Props) {
         onPointerCancel={onPointerUp}
         onPointerLeave={onPointerUp}
         onWheel={(e) =>
-          setZoom((z) => Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, z * Math.exp(-e.deltaY * 0.0015))))
+          setZoom((z) => Math.min(maxZoom, Math.max(MIN_ZOOM, z * Math.exp(-e.deltaY * 0.0015))))
         }
       >
         <g transform={scaleTransform}>
@@ -231,6 +243,7 @@ export function WorldMap({ onSelect, selected, pins }: Props) {
               </g>
             );
           })}
+          {mode === "places" && (
           <g
             aria-hidden={zoom < PIN_ZOOM}
             style={{
@@ -315,6 +328,7 @@ export function WorldMap({ onSelect, selected, pins }: Props) {
               );
             })}
           </g>
+          )}
           {burst && (
             <circle
               className="scratch-burst"
