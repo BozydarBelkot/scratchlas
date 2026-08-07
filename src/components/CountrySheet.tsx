@@ -1,25 +1,15 @@
 import { useEffect, useMemo, useState } from "react";
-import {
-  BookOpen,
-  Building2,
-  Check,
-  Landmark,
-  MapPin,
-  MapPinned,
-  Search,
-  X,
-} from "lucide-react";
+import { Building2, Check, Landmark, MapPinned, Search, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
-import { ReferenceCard } from "@/components/ReferenceCard";
 import { BY_CCA2 } from "@/lib/countries";
 import { loadCountryGeo, type CountryGeo, type GeoEntry } from "@/lib/geo-data";
 import { useStore, STATUS_LABEL, KIND_LABEL, type PlaceKind, type Status } from "@/lib/store";
+import type { MapMode } from "@/components/WorldMap";
 
 const STATUSES: Status[] = ["visited", "wish", "lived"];
 
 type SubKind = Exclude<PlaceKind, "country">;
-type SheetTab = "places" | "guide";
 
 const CATEGORIES: { id: SubKind; label: string; icon: typeof Building2 }[] = [
   { id: "city", label: "Cities", icon: Building2 },
@@ -30,9 +20,16 @@ const CATEGORIES: { id: SubKind; label: string; icon: typeof Building2 }[] = [
 const statusColor = (s: Status) =>
   s === "visited" ? "var(--map-visited)" : s === "wish" ? "var(--map-wish)" : "var(--map-lived)";
 
-export function CountrySheet({ code, onClose }: { code: string | null; onClose: () => void }) {
+export function CountrySheet({
+  code,
+  mode,
+  onClose,
+}: {
+  code: string | null;
+  mode: MapMode;
+  onClose: () => void;
+}) {
   const { state, statusByCountry, setCountryStatus, addPlace, removePlace } = useStore();
-  const [sheetTab, setSheetTab] = useState<SheetTab>("places");
   const [tab, setTab] = useState<SubKind>("city");
   const [addStatus, setAddStatus] = useState<Status>("visited");
   const [q, setQ] = useState("");
@@ -40,7 +37,6 @@ export function CountrySheet({ code, onClose }: { code: string | null; onClose: 
 
   // Reset the picker whenever another country is opened.
   useEffect(() => {
-    setSheetTab("places");
     setTab("city");
     setQ("");
     setGeo(null);
@@ -91,11 +87,14 @@ export function CountrySheet({ code, onClose }: { code: string | null; onClose: 
     }
   };
 
+  // Non-modal + no overlay: the map stays fully visible and interactive
+  // while the menu is open.
   return (
-    <Sheet open={!!code} onOpenChange={(o) => !o && onClose()}>
+    <Sheet open={!!code} onOpenChange={(o) => !o && onClose()} modal={false}>
       <SheetContent
         side="bottom"
-        className="max-h-[88vh] overflow-y-auto rounded-t-2xl px-4 pb-8 sm:max-w-xl sm:mx-auto"
+        hideOverlay
+        className="max-h-[88vh] overflow-y-auto rounded-t-2xl px-4 pb-8 sm:mx-auto sm:max-w-xl"
       >
         <SheetHeader className="px-0">
           <SheetTitle className="flex items-center gap-2 text-2xl font-display">
@@ -124,38 +123,7 @@ export function CountrySheet({ code, onClose }: { code: string | null; onClose: 
           ))}
         </div>
 
-        <div className="mt-4 grid grid-cols-2 gap-1 rounded-full border border-border p-1">
-          {(
-            [
-              { id: "places", label: "Places", icon: MapPin },
-              { id: "guide", label: "Guide", icon: BookOpen },
-            ] as const
-          ).map((t) => (
-            <button
-              key={t.id}
-              type="button"
-              onClick={() => setSheetTab(t.id)}
-              className={`flex items-center justify-center gap-1.5 rounded-full px-3 py-2 text-xs font-medium transition-colors ${
-                sheetTab === t.id
-                  ? "bg-primary text-primary-foreground"
-                  : "text-muted-foreground hover:bg-accent"
-              }`}
-            >
-              <t.icon className="size-3.5" />
-              {t.label}
-            </button>
-          ))}
-        </div>
-
-        {sheetTab === "guide" ? (
-          <div className="mt-4 space-y-2">
-            <span className="label-caps">Offline country guide</span>
-            <ReferenceCard c={c} />
-            <p className="text-xs text-muted-foreground">
-              Works with no signal — stored on your device.
-            </p>
-          </div>
-        ) : (
+        {mode === "places" && (
           <div className="mt-4 space-y-3">
             <span className="label-caps">Places in {c.name}</span>
 

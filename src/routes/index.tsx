@@ -2,16 +2,18 @@ import { useMemo, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import {
   BookOpen,
+  Flag,
+  Globe,
+  LifeBuoy,
+  LogOut,
   Map as MapIcon,
+  MapPin,
   Moon,
   Sun,
   Trophy,
-  LifeBuoy,
-  Flag,
-  LogOut,
 } from "lucide-react";
 import { StoreProvider, useStore, type MapTheme } from "@/lib/store";
-import { WorldMap } from "@/components/WorldMap";
+import { WorldMap, type MapMode } from "@/components/WorldMap";
 import { CountrySheet } from "@/components/CountrySheet";
 import { CountriesPanel } from "@/components/CountriesPanel";
 import { JournalPanel } from "@/components/JournalPanel";
@@ -62,6 +64,7 @@ function App() {
   const { state, setMode, setMapTheme, ready, user, signOut } = useStore();
   const [tab, setTab] = useState<Tab>("map");
   const [selected, setSelected] = useState<string | null>(null);
+  const [mapMode, setMapMode] = useState<MapMode>("world");
 
   const pins = useMemo(
     () => state.places.filter((p) => p.kind !== "country" && p.lat != null),
@@ -82,9 +85,42 @@ function App() {
   return (
     <div className="min-h-screen bg-background">
       {isMap ? (
-        <main className="fixed inset-0 bottom-[58px]">
-          {ready && <WorldMap onSelect={setSelected} selected={selected} pins={pins} />}
-        </main>
+        <>
+          <main className="fixed inset-0 bottom-[58px]">
+            {ready && (
+              <WorldMap onSelect={setSelected} selected={selected} pins={pins} mode={mapMode} />
+            )}
+          </main>
+
+          {/* World / Places mode toggle — floats on the right, above the
+              country menu (higher z-index than the sheet) so it stays usable
+              while the menu is open. */}
+          <div className="fixed right-3 top-1/2 z-[60] -translate-y-1/2">
+            <div className="flex flex-col gap-1 rounded-full border border-border bg-background/85 p-1 shadow-lg backdrop-blur">
+              {(
+                [
+                  { id: "world", label: "World", icon: Globe },
+                  { id: "places", label: "Places", icon: MapPin },
+                ] as const
+              ).map((m) => (
+                <button
+                  key={m.id}
+                  type="button"
+                  aria-pressed={mapMode === m.id}
+                  onClick={() => setMapMode(m.id)}
+                  className={`flex flex-col items-center gap-0.5 rounded-full px-2.5 py-2 text-[10px] font-medium transition-colors ${
+                    mapMode === m.id
+                      ? "bg-primary text-primary-foreground"
+                      : "text-muted-foreground hover:bg-accent"
+                  }`}
+                >
+                  <m.icon className="size-4" />
+                  {m.label}
+                </button>
+              ))}
+            </div>
+          </div>
+        </>
       ) : (
         <>
           <header className="sticky top-0 z-20 border-b border-border bg-background/85 backdrop-blur">
@@ -142,7 +178,7 @@ function App() {
         </>
       )}
 
-      <CountrySheet code={selected} onClose={() => setSelected(null)} />
+      <CountrySheet code={selected} mode={mapMode} onClose={() => setSelected(null)} />
 
       <nav className="fixed inset-x-0 bottom-0 z-20 border-t border-border bg-background/95 backdrop-blur">
         <div className="mx-auto flex max-w-3xl">
