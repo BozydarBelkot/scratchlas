@@ -1,11 +1,17 @@
+import { useI18n } from "@/lib/i18n";
 import { useState } from "react";
 import { Globe2, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useStore } from "@/lib/store";
+import { TEST_LOGIN, TEST_PASSWORD } from "@/lib/local-account";
 
 export function AuthScreen() {
+  const { tr } = useI18n();
+
+  const { continueAsGuest, signInTestAccount } = useStore();
   const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -18,6 +24,11 @@ export function AuthScreen() {
     setBusy(true);
     setError(null);
     setNotice(null);
+    if (mode === "signin" && !email.includes("@")) {
+      if (!signInTestAccount(email, password)) setError("Incorrect test login or password.");
+      setBusy(false);
+      return;
+    }
     if (mode === "signin") {
       const { error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) setError(error.message);
@@ -45,7 +56,9 @@ export function AuthScreen() {
         <div className="mb-8 text-center">
           <Globe2 className="mx-auto mb-3 size-8 text-muted-foreground" strokeWidth={1.4} />
           <h1 className="font-display text-3xl">Scratchlas</h1>
-          <p className="mt-1 text-sm text-muted-foreground">Your world, one scratch at a time</p>
+          <p className="mt-1 text-sm text-muted-foreground">
+            {tr("Your world, one scratch at a time")}
+          </p>
         </div>
 
         <div className="rounded-2xl border border-border bg-card p-5 shadow-sm">
@@ -57,38 +70,39 @@ export function AuthScreen() {
             disabled={busy}
           >
             <GoogleMark />
-            Continue with Google
+            {tr("Continue with Google")}
           </Button>
 
           <div className="my-4 flex items-center gap-3 text-[11px] uppercase tracking-wider text-muted-foreground">
             <span className="h-px flex-1 bg-border" />
-            or
+            {tr("or")}
             <span className="h-px flex-1 bg-border" />
           </div>
 
           <form onSubmit={submit} className="space-y-3">
             <Input
-              type="email"
+              type={mode === "signin" ? "text" : "email"}
               required
-              placeholder="Email"
+              aria-label={tr(mode === "signin" ? "Email or test login" : "Email")}
+              placeholder={tr(mode === "signin" ? "Email or test login" : "Email")}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              autoComplete="email"
+              autoComplete="username"
             />
             <Input
               type="password"
               required
               minLength={6}
-              placeholder="Password"
+              placeholder={tr("Password")}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               autoComplete={mode === "signin" ? "current-password" : "new-password"}
             />
-            {error && <p className="text-xs text-destructive">{error}</p>}
-            {notice && <p className="text-xs text-muted-foreground">{notice}</p>}
+            {error && <p className="text-xs text-destructive">{tr(error)}</p>}
+            {notice && <p className="text-xs text-muted-foreground">{tr(notice)}</p>}
             <Button type="submit" className="w-full" disabled={busy}>
               {busy && <Loader2 className="size-4 animate-spin" />}
-              {mode === "signin" ? "Sign in" : "Create account"}
+              {mode === "signin" ? tr("Sign in") : tr("Create account")}
             </Button>
           </form>
 
@@ -101,12 +115,31 @@ export function AuthScreen() {
             }}
             className="mt-4 w-full text-center text-xs text-muted-foreground underline-offset-4 hover:underline"
           >
-            {mode === "signin" ? "New here? Create an account" : "Already have an account? Sign in"}
+            {mode === "signin"
+              ? tr("New here? Create an account")
+              : tr("Already have an account? Sign in")}
           </button>
         </div>
 
-        <p className="mt-4 text-center text-[11px] text-muted-foreground">
-          Your map, journal and photos sync to your account.
+        <div className="mt-4 rounded-xl border border-border p-3 text-sm">
+          <p className="font-medium">{tr("Local test account")}</p>
+          <p>
+            {tr("Login")}: <code>{TEST_LOGIN}</code> · {tr("Password")}:{" "}
+            <code>{TEST_PASSWORD}</code>
+          </p>
+          <p className="mt-1 text-xs text-muted-foreground">
+            {tr(
+              "Demo profile with public credentials. Data stays in this browser, separate from guest data; it does not sync between devices.",
+            )}
+          </p>
+        </div>
+        <Button type="button" variant="secondary" className="mt-4 w-full" onClick={continueAsGuest}>
+          {tr("Skip sign in")}
+        </Button>
+        <p className="mt-2 text-center text-[11px] text-muted-foreground">
+          {tr(
+            "Without an account, data is saved only in this browser. Clearing browser data will remove it.",
+          )}
         </p>
       </div>
     </div>

@@ -1,5 +1,14 @@
+import { useI18n } from "@/lib/i18n";
+import { useRegionAreas } from "@/lib/region-areas";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { geoOrthographic, geoPath, geoGraticule10, geoCentroid, geoDistance } from "d3-geo";
+import {
+  geoOrthographic,
+  geoPath,
+  geoGraticule10,
+  geoCentroid,
+  geoDistance,
+  geoArea,
+} from "d3-geo";
 import { feature } from "topojson-client";
 import type { FeatureCollection, Feature, Geometry } from "geojson";
 import topo from "world-atlas/countries-110m.json";
@@ -40,10 +49,16 @@ interface Props {
 }
 
 export function WorldMap({ onSelect, selected, pins, mode }: Props) {
+  const { tr } = useI18n();
+
+  const { areas, missing } = useRegionAreas(pins);
   const maxZoom = mode === "places" ? MAX_ZOOM_PLACES : MAX_ZOOM_WORLD;
   const { statusByCountry, justMarked } = useStore();
   const [rotation, setRotation] = useState<[number, number]>([-10, -18]);
   const [zoom, setZoom] = useState(1);
+  const rotationRef = useRef(rotation);
+  rotationRef.current = rotation;
+  const rotationFrame = useRef<number | null>(null);
   const drag = useRef<{ x: number; y: number; r: [number, number]; z: number } | null>(null);
 
   const projection = useMemo(
@@ -62,6 +77,20 @@ export function WorldMap({ onSelect, selected, pins, mode }: Props) {
   );
 
   const path = useMemo(() => geoPath(projection), [projection]);
+  const selectedOutline = useMemo(() => {
+    const rings = FEATURES.filter(
+      (f) => BY_CCN3[String(f.id).padStart(3, "0")]?.cca2 === selected,
+    ).flatMap((f) =>
+      f.geometry.type === "Polygon"
+        ? f.geometry.coordinates
+        : f.geometry.type === "MultiPolygon"
+          ? f.geometry.coordinates.flat()
+          : [],
+    );
+    // Project boundary lines, not polygon fills: clipping at the horizon must not
+    // invent an outline along the edge of the globe.
+    return rings.length ? path({ type: "MultiLineString", coordinates: rings }) : null;
+  }, [selected, path]);
 
   const paths = useMemo(
     () =>
@@ -94,13 +123,32 @@ export function WorldMap({ onSelect, selected, pins, mode }: Props) {
   useEffect(() => {
     if (!selected) return;
     const f = FEATURES.find((x) => BY_CCN3[String(x.id).padStart(3, "0")]?.cca2 === selected);
-    if (f) {
-      const [lon, lat] = geoCentroid(f);
-      setRotation([-lon, -lat]);
-    } else {
-      const info = BY_CCA2[selected];
-      if (info) setRotation([-info.latlng[1], -info.latlng[0]]);
+    const info = BY_CCA2[selected];
+    const target = f ? geoCentroid(f) : info ? [info.latlng[1], info.latlng[0]] : null;
+    if (!target) return;
+    const start = rotationRef.current;
+    const longitudeDelta = ((((-target[0] - start[0] + 540) % 360) + 360) % 360) - 180;
+    const end: [number, number] = [start[0] + longitudeDelta, -target[1]];
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setRotation(end);
+      return;
     }
+    const started = performance.now();
+    const frame = (now: number) => {
+      const progress = Math.min(1, (now - started) / 650);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      const next: [number, number] = [
+        start[0] + (end[0] - start[0]) * eased,
+        start[1] + (end[1] - start[1]) * eased,
+      ];
+      rotationRef.current = next;
+      setRotation(next);
+      rotationFrame.current = progress < 1 ? requestAnimationFrame(frame) : null;
+    };
+    rotationFrame.current = requestAnimationFrame(frame);
+    return () => {
+      if (rotationFrame.current !== null) cancelAnimationFrame(rotationFrame.current);
+    };
   }, [selected]);
 
   // Switching back to World mode clamps any deeper Places-mode zoom.
@@ -124,6 +172,10 @@ export function WorldMap({ onSelect, selected, pins, mode }: Props) {
   const moved = useRef(false);
 
   function onPointerDown(e: React.PointerEvent) {
+    if (rotationFrame.current !== null) {
+      cancelAnimationFrame(rotationFrame.current);
+      rotationFrame.current = null;
+    }
     (e.target as Element).setPointerCapture?.(e.pointerId);
     moved.current = false;
     pointers.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
@@ -163,10 +215,46 @@ export function WorldMap({ onSelect, selected, pins, mode }: Props) {
     drag.current = null;
   }
 
+  const globeAreas = useMemo(
+    () =>
+      areas.features.map((f) => {
+        // D3 uses clockwise exterior rings; GeoJSON datasets may use the reverse.
+        if (geoArea(f) <= 2 * Math.PI) return f;
+        const geometry = structuredClone(f.geometry);
+        if (geometry.type === "Polygon") geometry.coordinates.forEach((r) => r.reverse());
+        if (geometry.type === "MultiPolygon")
+          geometry.coordinates.forEach((p) => p.forEach((r) => r.reverse()));
+        return { ...f, geometry };
+      }),
+    [areas],
+  );
   const scaleTransform = `translate(${W / 2} ${H / 2}) scale(${zoom}) translate(${-W / 2} ${-H / 2})`;
 
   return (
     <div className="relative h-full w-full select-none overflow-hidden">
+      <div className="absolute left-3 top-3 z-10 flex gap-2">
+        <button
+          type="button"
+          aria-label={tr("Zoom in")}
+          className="rounded-lg border bg-background px-3 py-2 shadow"
+          onClick={() => setZoom((z) => Math.min(maxZoom, z * 1.7))}
+        >
+          +
+        </button>
+        <button
+          type="button"
+          aria-label={tr("Zoom out")}
+          className="rounded-lg border bg-background px-3 py-2 shadow"
+          onClick={() => setZoom((z) => Math.max(1, z / 1.7))}
+        >
+          −
+        </button>
+      </div>
+      {missing && mode === "places" && (
+        <p className="absolute left-3 top-16 z-10 rounded bg-background p-2 text-xs">
+          {tr("Some region boundaries are temporarily unavailable.")}
+        </p>
+      )}
       <svg
         data-scratch-map=""
         viewBox={`0 0 ${W} ${H}`}
@@ -200,9 +288,19 @@ export function WorldMap({ onSelect, selected, pins, mode }: Props) {
               key={p.id}
               d={p.d ?? undefined}
               className="country-shape"
+              role={p.cca2 ? "button" : undefined}
+              aria-label={p.name}
+              aria-pressed={p.cca2 ? selected === p.cca2 : undefined}
+              tabIndex={p.cca2 ? 0 : undefined}
+              onKeyDown={(event) => {
+                if (p.cca2 && (event.key === "Enter" || event.key === " ")) {
+                  event.preventDefault();
+                  onSelect(p.cca2);
+                }
+              }}
               fill={statusFill(p.cca2)}
-              stroke={selected && p.cca2 === selected ? "var(--foreground)" : "var(--map-stroke)"}
-              strokeWidth={(selected && p.cca2 === selected ? 1.6 : 0.4) / zoom}
+              stroke="var(--map-stroke)"
+              strokeWidth={0.4 / zoom}
               onClick={() => {
                 const wasDrag = moved.current;
                 moved.current = false;
@@ -212,6 +310,27 @@ export function WorldMap({ onSelect, selected, pins, mode }: Props) {
               <title>{p.name}</title>
             </path>
           ))}
+          {mode === "places" &&
+            globeAreas.map((area, i) => (
+              <path
+                key={area.properties.name + i}
+                d={path(area) ?? undefined}
+                fill={
+                  area.properties.status === "wish"
+                    ? "var(--map-wish)"
+                    : area.properties.status === "lived"
+                      ? "var(--map-lived)"
+                      : "var(--map-visited)"
+                }
+                fillOpacity={0.3}
+                stroke="var(--foreground)"
+                strokeOpacity={0.6}
+                strokeWidth={0.8 / zoom}
+                pointerEvents="none"
+              >
+                <title>{area.properties.name}</title>
+              </path>
+            ))}
           {MICROSTATES.map((m) => {
             const [lat, lng] = m.latlng;
             if (geoDistance([-rotation[0], -rotation[1]], [lng, lat]) > Math.PI / 2) return null;
@@ -234,9 +353,7 @@ export function WorldMap({ onSelect, selected, pins, mode }: Props) {
                   cy={xy[1]}
                   r={3.2 / zoom}
                   fill={statusFill(m.cca2)}
-                  stroke={
-                    selected === m.cca2 ? "var(--foreground)" : "var(--map-stroke)"
-                  }
+                  stroke={selected === m.cca2 ? "var(--foreground)" : "var(--map-stroke)"}
                   strokeWidth={(selected === m.cca2 ? 1.4 : 0.7) / zoom}
                 />
                 <title>{m.name}</title>
@@ -244,90 +361,100 @@ export function WorldMap({ onSelect, selected, pins, mode }: Props) {
             );
           })}
           {mode === "places" && (
-          <g
-            aria-hidden={zoom < PIN_ZOOM}
-            style={{
-              opacity: zoom >= PIN_ZOOM ? 1 : 0,
-              transition: "opacity 200ms ease",
-              pointerEvents: "none",
-            }}
-          >
-            {pins.map((pl) => {
-              if (pl.lat == null || pl.lng == null) return null;
-              if (geoDistance([-rotation[0], -rotation[1]], [pl.lng, pl.lat]) > Math.PI / 2)
-                return null;
-              const xy = projection([pl.lng, pl.lat]);
-              if (!xy) return null;
-              const color =
-                pl.status === "visited"
-                  ? "var(--map-visited)"
-                  : pl.status === "wish"
-                    ? "var(--map-wish)"
-                    : "var(--map-lived)";
-              // Markers and labels keep a constant on-screen size at any zoom
-              // (dimensions are divided by zoom) and use a contrasting
-              // outline/halo so they stay readable on a same-colored country.
-              const label = (r: number) => (
-                <text
-                  x={xy[0]}
-                  y={xy[1] + (r + 8.6) / zoom}
-                  textAnchor="middle"
-                  fontSize={9 / zoom}
-                  fontWeight={500}
-                  fill="var(--foreground)"
-                  stroke="var(--card)"
-                  strokeWidth={2.4 / zoom}
-                  paintOrder="stroke"
-                >
-                  {pl.name}
-                </text>
-              );
-              if (pl.kind === "attraction") {
-                const r = 3.6 / zoom;
-                return (
-                  <g key={pl.id}>
-                    <path
-                      d={`M ${xy[0]} ${xy[1] - r} L ${xy[0] + r} ${xy[1]} L ${xy[0]} ${xy[1] + r} L ${xy[0] - r} ${xy[1]} Z`}
-                      fill={color}
-                      stroke="var(--card)"
-                      strokeWidth={1.2 / zoom}
-                    />
-                    {label(3.6)}
-                    <title>{pl.name}</title>
-                  </g>
-                );
-              }
-              if (pl.kind === "region") {
-                const r = 3.2 / zoom;
-                return (
-                  <g key={pl.id}>
-                    <path
-                      d={`M ${xy[0]} ${xy[1] - r} L ${xy[0] + r * 0.9} ${xy[1] + r * 0.75} L ${xy[0] - r * 0.9} ${xy[1] + r * 0.75} Z`}
-                      fill={color}
-                      stroke="var(--card)"
-                      strokeWidth={1.2 / zoom}
-                    />
-                    {label(3.2)}
-                    <title>{pl.name}</title>
-                  </g>
-                );
-              }
-              return (
-                <g key={pl.id}>
-                  <circle
-                    cx={xy[0]}
-                    cy={xy[1]}
-                    r={2.4 / zoom}
-                    fill={color}
+            <g
+              aria-hidden={zoom < PIN_ZOOM}
+              style={{
+                opacity: zoom >= PIN_ZOOM ? 1 : 0,
+                transition: "opacity 200ms ease",
+                pointerEvents: "none",
+              }}
+            >
+              {pins.map((pl) => {
+                if (pl.kind === "region") return null;
+                if (pl.lat == null || pl.lng == null) return null;
+                if (geoDistance([-rotation[0], -rotation[1]], [pl.lng, pl.lat]) > Math.PI / 2)
+                  return null;
+                const xy = projection([pl.lng, pl.lat]);
+                if (!xy) return null;
+                const color =
+                  pl.status === "visited"
+                    ? "var(--map-visited)"
+                    : pl.status === "wish"
+                      ? "var(--map-wish)"
+                      : "var(--map-lived)";
+                // Markers and labels keep a constant on-screen size at any zoom
+                // (dimensions are divided by zoom) and use a contrasting
+                // outline/halo so they stay readable on a same-colored country.
+                const label = (r: number) => (
+                  <text
+                    x={xy[0]}
+                    y={xy[1] + (r + 8.6) / zoom}
+                    textAnchor="middle"
+                    fontSize={9 / zoom}
+                    fontWeight={500}
+                    fill="var(--foreground)"
                     stroke="var(--card)"
-                    strokeWidth={1.3 / zoom}
-                  />
-                  {label(2.4)}
-                  <title>{pl.name}</title>
-                </g>
-              );
-            })}
-          </g>
+                    strokeWidth={2.4 / zoom}
+                    paintOrder="stroke"
+                  >
+                    {pl.name}
+                  </text>
+                );
+                if (pl.kind === "attraction") {
+                  const r = 3.6 / zoom;
+                  return (
+                    <g key={pl.id}>
+                      <path
+                        d={`M ${xy[0]} ${xy[1] - r} L ${xy[0] + r} ${xy[1]} L ${xy[0]} ${xy[1] + r} L ${xy[0] - r} ${xy[1]} Z`}
+                        fill={color}
+                        stroke="var(--card)"
+                        strokeWidth={1.2 / zoom}
+                      />
+                      {label(3.6)}
+                      <title>{pl.name}</title>
+                    </g>
+                  );
+                }
+
+                return (
+                  <g key={pl.id}>
+                    <circle
+                      cx={xy[0]}
+                      cy={xy[1]}
+                      r={2.4 / zoom}
+                      fill={color}
+                      stroke="var(--card)"
+                      strokeWidth={1.3 / zoom}
+                    />
+                    {label(2.4)}
+                    <title>{pl.name}</title>
+                  </g>
+                );
+              })}
+            </g>
+          )}
+          {selectedOutline && (
+            <g
+              data-selected-country={selected}
+              pointerEvents="none"
+              fill="none"
+              strokeLinejoin="round"
+              strokeLinecap="round"
+              aria-hidden="true"
+            >
+              <path
+                d={selectedOutline}
+                stroke="var(--background)"
+                strokeWidth={4}
+                vectorEffect="non-scaling-stroke"
+              />
+              <path
+                d={selectedOutline}
+                stroke="var(--foreground)"
+                strokeWidth={2}
+                vectorEffect="non-scaling-stroke"
+              />
+            </g>
           )}
           {burst && (
             <circle

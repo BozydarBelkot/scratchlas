@@ -1,0 +1,1528 @@
+{
+  "Map": {
+    "en": "Map",
+    "pl": "Mapa",
+    "de": "Karte",
+    "es": "Mapa",
+    "fr": "Carte"
+  },
+  "Countries": {
+    "en": "Countries",
+    "pl": "Kraje",
+    "de": "Länder",
+    "es": "Países",
+    "fr": "Pays"
+  },
+  "Journal": {
+    "en": "Journal",
+    "pl": "Dziennik",
+    "de": "Reisetagebuch",
+    "es": "Diario",
+    "fr": "Carnet"
+  },
+  "Stats": {
+    "en": "Stats",
+    "pl": "Statystyki",
+    "de": "Statistik",
+    "es": "Estadísticas",
+    "fr": "Statistiques"
+  },
+  "Guide": {
+    "en": "Guide",
+    "pl": "Przewodnik",
+    "de": "Reiseführer",
+    "es": "Guía",
+    "fr": "Guide"
+  },
+  "Settings": {
+    "en": "Settings",
+    "pl": "Ustawienia",
+    "de": "Einstellungen",
+    "es": "Ajustes",
+    "fr": "Paramètres"
+  },
+  "World": {
+    "en": "World",
+    "pl": "Świat",
+    "de": "Welt",
+    "es": "Mundo",
+    "fr": "Monde"
+  },
+  "Places": {
+    "en": "Places",
+    "pl": "Miejsca",
+    "de": "Orte",
+    "es": "Lugares",
+    "fr": "Lieux"
+  },
+  "Country": {
+    "en": "Country",
+    "pl": "Kraj",
+    "de": "Land",
+    "es": "País",
+    "fr": "Pays"
+  },
+  "City": {
+    "en": "City",
+    "pl": "Miasto",
+    "de": "Stadt",
+    "es": "Ciudad",
+    "fr": "Ville"
+  },
+  "Region": {
+    "en": "Region",
+    "pl": "Region",
+    "de": "Region",
+    "es": "Región",
+    "fr": "Région"
+  },
+  "Attraction": {
+    "en": "Attraction",
+    "pl": "Atrakcja",
+    "de": "Sehenswürdigkeit",
+    "es": "Atracción",
+    "fr": "Attraction"
+  },
+  "Cities": {
+    "en": "Cities",
+    "pl": "Miasta",
+    "de": "Städte",
+    "es": "Ciudades",
+    "fr": "Villes"
+  },
+  "Regions": {
+    "en": "Regions",
+    "pl": "Regiony",
+    "de": "Regionen",
+    "es": "Regiones",
+    "fr": "Régions"
+  },
+  "Attractions": {
+    "en": "Attractions",
+    "pl": "Atrakcje",
+    "de": "Sehenswürdigkeiten",
+    "es": "Atracciones",
+    "fr": "Attractions"
+  },
+  "Visited": {
+    "en": "Visited",
+    "pl": "Odwiedzone",
+    "de": "Besucht",
+    "es": "Visitados",
+    "fr": "Visités"
+  },
+  "Lived here": {
+    "en": "Lived here",
+    "pl": "Mieszkałem tutaj",
+    "de": "Hier gewohnt",
+    "es": "He vivido aquí",
+    "fr": "J’y ai vécu"
+  },
+  "Lived": {
+    "en": "Lived",
+    "pl": "Zamieszkane",
+    "de": "Bewohnt",
+    "es": "Vividos",
+    "fr": "Habités"
+  },
+  "Wish list": {
+    "en": "Wish list",
+    "pl": "Lista życzeń",
+    "de": "Wunschliste",
+    "es": "Lista de deseos",
+    "fr": "Envies"
+  },
+  "All": {
+    "en": "All",
+    "pl": "Wszystkie",
+    "de": "Alle",
+    "es": "Todos",
+    "fr": "Tous"
+  },
+  "Your world, one scratch at a time": {
+    "en": "Your world, one scratch at a time",
+    "pl": "Twój świat, odkrywany krok po kroku",
+    "de": "Deine Welt, Stück für Stück",
+    "es": "Tu mundo, paso a paso",
+    "fr": "Votre monde, pas à pas"
+  },
+  "Continue with Google": {
+    "en": "Continue with Google",
+    "pl": "Kontynuuj z Google",
+    "de": "Mit Google fortfahren",
+    "es": "Continuar con Google",
+    "fr": "Continuer avec Google"
+  },
+  "or": {
+    "en": "or",
+    "pl": "lub",
+    "de": "oder",
+    "es": "o",
+    "fr": "ou"
+  },
+  "Email": {
+    "en": "Email",
+    "pl": "E-mail",
+    "de": "E-Mail",
+    "es": "Correo electrónico",
+    "fr": "E-mail"
+  },
+  "Password": {
+    "en": "Password",
+    "pl": "Hasło",
+    "de": "Passwort",
+    "es": "Contraseña",
+    "fr": "Mot de passe"
+  },
+  "Sign in": {
+    "en": "Sign in",
+    "pl": "Zaloguj się",
+    "de": "Anmelden",
+    "es": "Iniciar sesión",
+    "fr": "Se connecter"
+  },
+  "Create account": {
+    "en": "Create account",
+    "pl": "Utwórz konto",
+    "de": "Konto erstellen",
+    "es": "Crear cuenta",
+    "fr": "Créer un compte"
+  },
+  "New here? Create an account": {
+    "en": "New here? Create an account",
+    "pl": "Nie masz konta? Utwórz je",
+    "de": "Neu hier? Konto erstellen",
+    "es": "¿Eres nuevo? Crea una cuenta",
+    "fr": "Nouveau ? Créez un compte"
+  },
+  "Already have an account? Sign in": {
+    "en": "Already have an account? Sign in",
+    "pl": "Masz już konto? Zaloguj się",
+    "de": "Schon ein Konto? Anmelden",
+    "es": "¿Ya tienes cuenta? Inicia sesión",
+    "fr": "Déjà un compte ? Connectez-vous"
+  },
+  "Skip sign in": {
+    "en": "Skip sign in",
+    "pl": "Pomiń logowanie",
+    "de": "Anmeldung überspringen",
+    "es": "Omitir inicio de sesión",
+    "fr": "Passer la connexion"
+  },
+  "Without an account, data is saved only in this browser. Clearing browser data will remove it.": {
+    "en": "Without an account, data is saved only in this browser. Clearing browser data will remove it.",
+    "pl": "Bez konta dane są zapisywane tylko w tej przeglądarce. Wyczyszczenie danych przeglądarki je usunie.",
+    "de": "Ohne Konto werden Daten nur in diesem Browser gespeichert. Beim Löschen der Browserdaten gehen sie verloren.",
+    "es": "Sin cuenta, los datos solo se guardan en este navegador. Borrar los datos del navegador los eliminará.",
+    "fr": "Sans compte, les données restent dans ce navigateur. Effacer ses données les supprimera."
+  },
+  "Account created — check your inbox to confirm your email, then sign in.": {
+    "en": "Account created — check your inbox to confirm your email, then sign in.",
+    "pl": "Konto utworzone — potwierdź adres e-mail, a następnie się zaloguj.",
+    "de": "Konto erstellt — bestätige deine E-Mail und melde dich an.",
+    "es": "Cuenta creada: confirma tu correo e inicia sesión.",
+    "fr": "Compte créé : confirmez votre e-mail, puis connectez-vous."
+  },
+  "Flag of {0}": {
+    "en": "Flag of {0}",
+    "pl": "Flaga: {0}",
+    "de": "Flagge von {0}",
+    "es": "Bandera de {0}",
+    "fr": "Drapeau de {0}"
+  },
+  "Map view": {
+    "en": "Map view",
+    "pl": "Widok mapy",
+    "de": "Kartenansicht",
+    "es": "Vista del mapa",
+    "fr": "Vue de la carte"
+  },
+  "Places in {0}": {
+    "en": "Places in {0}",
+    "pl": "Miejsca w: {0}",
+    "de": "Orte in {0}",
+    "es": "Lugares en {0}",
+    "fr": "Lieux en {0}"
+  },
+  "Add as": {
+    "en": "Add as",
+    "pl": "Dodaj jako",
+    "de": "Hinzufügen als",
+    "es": "Añadir como",
+    "fr": "Ajouter comme"
+  },
+  "Search places in {0}": {
+    "en": "Search places in {0}",
+    "pl": "Szukaj miejsc w: {0}",
+    "de": "Orte in {0} suchen",
+    "es": "Buscar lugares en {0}",
+    "fr": "Rechercher des lieux en {0}"
+  },
+  "Loading places…": {
+    "en": "Loading places…",
+    "pl": "Wczytywanie miejsc…",
+    "de": "Orte werden geladen…",
+    "es": "Cargando lugares…",
+    "fr": "Chargement des lieux…"
+  },
+  "No match for “{0}”.": {
+    "en": "No match for “{0}”.",
+    "pl": "Brak wyników dla „{0}”.",
+    "de": "Keine Treffer für „{0}“.",
+    "es": "Sin resultados para «{0}».",
+    "fr": "Aucun résultat pour « {0} »."
+  },
+  "No places listed for {0} yet.": {
+    "en": "No places listed for {0} yet.",
+    "pl": "Brak miejsc dla: {0}.",
+    "de": "Noch keine Orte für {0} vorhanden.",
+    "es": "Aún no hay lugares para {0}.",
+    "fr": "Aucun lieu répertorié pour {0}."
+  },
+  "Remove {0}": {
+    "en": "Remove {0}",
+    "pl": "Usuń {0}",
+    "de": "{0} entfernen",
+    "es": "Eliminar {0}",
+    "fr": "Supprimer {0}"
+  },
+  "Marked places": {
+    "en": "Marked places",
+    "pl": "Zaznaczone miejsca",
+    "de": "Markierte Orte",
+    "es": "Lugares marcados",
+    "fr": "Lieux marqués"
+  },
+  "No cities, regions or attractions marked in this country yet.": {
+    "en": "No cities, regions or attractions marked in this country yet.",
+    "pl": "Nie zaznaczono jeszcze miast, regionów ani atrakcji w tym kraju.",
+    "de": "In diesem Land sind noch keine Städte, Regionen oder Sehenswürdigkeiten markiert.",
+    "es": "Aún no hay ciudades, regiones ni atracciones marcadas en este país.",
+    "fr": "Aucune ville, région ou attraction marquée dans ce pays."
+  },
+  "Trips in this country": {
+    "en": "Trips in this country",
+    "pl": "Wycieczki w tym kraju",
+    "de": "Reisen in diesem Land",
+    "es": "Viajes en este país",
+    "fr": "Voyages dans ce pays"
+  },
+  "My countries": {
+    "en": "My countries",
+    "pl": "Moje kraje",
+    "de": "Meine Länder",
+    "es": "Mis países",
+    "fr": "Mes pays"
+  },
+  "Search marked countries": {
+    "en": "Search marked countries",
+    "pl": "Szukaj zaznaczonych krajów",
+    "de": "Markierte Länder suchen",
+    "es": "Buscar países marcados",
+    "fr": "Rechercher les pays marqués"
+  },
+  "Nothing here yet — tap a country on the map to mark it.": {
+    "en": "Nothing here yet — tap a country on the map to mark it.",
+    "pl": "Jeszcze nic tu nie ma — kliknij kraj na mapie, aby go zaznaczyć.",
+    "de": "Noch nichts hier — tippe auf ein Land auf der Karte, um es zu markieren.",
+    "es": "Aún no hay nada: toca un país en el mapa para marcarlo.",
+    "fr": "Rien pour le moment : touchez un pays sur la carte pour le marquer."
+  },
+  "Places: {0}": {
+    "en": "Places: {0}",
+    "pl": "Miejsca: {0}",
+    "de": "Orte: {0}",
+    "es": "Lugares: {0}",
+    "fr": "Lieux : {0}"
+  },
+  "Travel journal": {
+    "en": "Travel journal",
+    "pl": "Dziennik podróży",
+    "de": "Reisetagebuch",
+    "es": "Diario de viajes",
+    "fr": "Carnet de voyage"
+  },
+  "Trip": {
+    "en": "Trip",
+    "pl": "Wycieczka",
+    "de": "Reise",
+    "es": "Viaje",
+    "fr": "Voyage"
+  },
+  "Create a trip and choose countries and places to build your timeline.": {
+    "en": "Create a trip and choose countries and places to build your timeline.",
+    "pl": "Utwórz wycieczkę i wybierz kraje oraz miejsca, aby zbudować swoją oś czasu.",
+    "de": "Erstelle eine Reise und wähle Länder und Orte für deine Zeitleiste.",
+    "es": "Crea un viaje y elige países y lugares para construir tu cronología.",
+    "fr": "Créez un voyage et choisissez des pays et des lieux pour votre chronologie."
+  },
+  "· Countries: {0} · Planned places: {1}": {
+    "en": "· Countries: {0} · Planned places: {1}",
+    "pl": " · Kraje: {0} · Miejsca w planie: {1}",
+    "de": " · Länder: {0} · Geplante Orte: {1}",
+    "es": " · Países: {0} · Lugares previstos: {1}",
+    "fr": " · Pays : {0} · Lieux prévus : {1}"
+  },
+  "Edit {0}": {
+    "en": "Edit {0}",
+    "pl": "Edytuj {0}",
+    "de": "{0} bearbeiten",
+    "es": "Editar {0}",
+    "fr": "Modifier {0}"
+  },
+  "Delete {0}": {
+    "en": "Delete {0}",
+    "pl": "Usuń wycieczkę: {0}",
+    "de": "{0} löschen",
+    "es": "Borrar {0}",
+    "fr": "Supprimer le voyage {0}"
+  },
+  "No additional stops": {
+    "en": "No additional stops",
+    "pl": "Bez dodatkowych przystanków",
+    "de": "Keine weiteren Stopps",
+    "es": "Sin paradas adicionales",
+    "fr": "Aucune étape supplémentaire"
+  },
+  "Places assigned to this trip on the map will appear here.": {
+    "en": "Places assigned to this trip on the map will appear here.",
+    "pl": "Miejsca przypisane do wycieczki na mapie pojawią się tutaj.",
+    "de": "Dieser Reise zugewiesene Orte erscheinen hier.",
+    "es": "Los lugares asignados a este viaje en el mapa aparecerán aquí.",
+    "fr": "Les lieux associés à ce voyage sur la carte apparaîtront ici."
+  },
+  "Unsorted marks": {
+    "en": "Unsorted marks",
+    "pl": "Nieprzypisane miejsca",
+    "de": "Nicht zugeordnete Orte",
+    "es": "Lugares sin asignar",
+    "fr": "Lieux non classés"
+  },
+  "Move up: {0}": {
+    "en": "Move up: {0}",
+    "pl": "Przesuń wyżej: {0}",
+    "de": "Nach oben: {0}",
+    "es": "Subir: {0}",
+    "fr": "Monter : {0}"
+  },
+  "Move down: {0}": {
+    "en": "Move down: {0}",
+    "pl": "Przesuń niżej: {0}",
+    "de": "Nach unten: {0}",
+    "es": "Bajar: {0}",
+    "fr": "Descendre : {0}"
+  },
+  "Remove from route: {0}": {
+    "en": "Remove from route: {0}",
+    "pl": "Usuń z trasy: {0}",
+    "de": "Aus Route entfernen: {0}",
+    "es": "Quitar de la ruta: {0}",
+    "fr": "Retirer du parcours : {0}"
+  },
+  "Place type": {
+    "en": "Place type",
+    "pl": "Rodzaj miejsca",
+    "de": "Art des Ortes",
+    "es": "Tipo de lugar",
+    "fr": "Type de lieu"
+  },
+  "Search places: {0}": {
+    "en": "Search places: {0}",
+    "pl": "Szukaj miejsc: {0}",
+    "de": "Orte suchen: {0}",
+    "es": "Buscar lugares: {0}",
+    "fr": "Rechercher des lieux : {0}"
+  },
+  "Search places…": {
+    "en": "Search places…",
+    "pl": "Szukaj miejsca…",
+    "de": "Orte suchen…",
+    "es": "Buscar lugares…",
+    "fr": "Rechercher des lieux…"
+  },
+  "Could not load places.": {
+    "en": "Could not load places.",
+    "pl": "Nie udało się wczytać miejsc.",
+    "de": "Orte konnten nicht geladen werden.",
+    "es": "No se pudieron cargar los lugares.",
+    "fr": "Impossible de charger les lieux."
+  },
+  "No matching places.": {
+    "en": "No matching places.",
+    "pl": "Brak miejsc spełniających kryteria.",
+    "de": "Keine passenden Orte.",
+    "es": "No hay lugares coincidentes.",
+    "fr": "Aucun lieu correspondant."
+  },
+  "Stop order ({0})": {
+    "en": "Stop order ({0})",
+    "pl": "Kolejność miejsc ({0})",
+    "de": "Reihenfolge der Stopps ({0})",
+    "es": "Orden de paradas ({0})",
+    "fr": "Ordre des étapes ({0})"
+  },
+  "Choose places above. You can also save just the country.": {
+    "en": "Choose places above. You can also save just the country.",
+    "pl": "Wybierz miejsca powyżej. Możesz też zapisać sam kraj.",
+    "de": "Wähle oben Orte aus. Du kannst auch nur das Land speichern.",
+    "es": "Elige lugares arriba. También puedes guardar solo el país.",
+    "fr": "Choisissez des lieux ci-dessus. Vous pouvez aussi enregistrer uniquement le pays."
+  },
+  "Edit trip": {
+    "en": "Edit trip",
+    "pl": "Edytuj wycieczkę",
+    "de": "Reise bearbeiten",
+    "es": "Editar viaje",
+    "fr": "Modifier le voyage"
+  },
+  "New trip": {
+    "en": "New trip",
+    "pl": "Nowa wycieczka",
+    "de": "Neue Reise",
+    "es": "Nuevo viaje",
+    "fr": "Nouveau voyage"
+  },
+  "Trip name": {
+    "en": "Trip name",
+    "pl": "Nazwa wycieczki",
+    "de": "Reisename",
+    "es": "Nombre del viaje",
+    "fr": "Nom du voyage"
+  },
+  "e.g. Summer in Europe": {
+    "en": "e.g. Summer in Europe",
+    "pl": "Np. Wakacje w Europie",
+    "de": "z. B. Sommer in Europa",
+    "es": "p. ej. Verano en Europa",
+    "fr": "Ex. : Été en Europe"
+  },
+  "Start date": {
+    "en": "Start date",
+    "pl": "Początek",
+    "de": "Startdatum",
+    "es": "Fecha de inicio",
+    "fr": "Date de début"
+  },
+  "End date (optional)": {
+    "en": "End date (optional)",
+    "pl": "Koniec (opcjonalnie)",
+    "de": "Enddatum (optional)",
+    "es": "Fecha de fin (opcional)",
+    "fr": "Date de fin (facultative)"
+  },
+  "Trip countries": {
+    "en": "Trip countries",
+    "pl": "Kraje wycieczki",
+    "de": "Reiseländer",
+    "es": "Países del viaje",
+    "fr": "Pays du voyage"
+  },
+  "Select one or more countries. Use the arrows to order countries and places.": {
+    "en": "Select one or more countries. Use the arrows to order countries and places.",
+    "pl": "Zaznacz jeden lub wiele krajów. Strzałkami ustawisz kolejność krajów i miejsc.",
+    "de": "Wähle ein oder mehrere Länder. Ordne Länder und Orte mit den Pfeilen.",
+    "es": "Selecciona uno o más países. Usa las flechas para ordenar países y lugares.",
+    "fr": "Sélectionnez un ou plusieurs pays. Utilisez les flèches pour ordonner pays et lieux."
+  },
+  "Search trip countries": {
+    "en": "Search trip countries",
+    "pl": "Szukaj kraju wycieczki",
+    "de": "Reiseländer suchen",
+    "es": "Buscar países del viaje",
+    "fr": "Rechercher les pays du voyage"
+  },
+  "Search countries…": {
+    "en": "Search countries…",
+    "pl": "Szukaj kraju…",
+    "de": "Länder suchen…",
+    "es": "Buscar países…",
+    "fr": "Rechercher des pays…"
+  },
+  "Collapse": {
+    "en": "Collapse",
+    "pl": "Zwiń",
+    "de": "Einklappen",
+    "es": "Contraer",
+    "fr": "Réduire"
+  },
+  "Choose places": {
+    "en": "Choose places",
+    "pl": "Wybierz miejsca",
+    "de": "Orte auswählen",
+    "es": "Elegir lugares",
+    "fr": "Choisir des lieux"
+  },
+  "Notes": {
+    "en": "Notes",
+    "pl": "Notatki",
+    "de": "Notizen",
+    "es": "Notas",
+    "fr": "Notes"
+  },
+  "Plans, memories, useful information…": {
+    "en": "Plans, memories, useful information…",
+    "pl": "Plan, wspomnienia, ważne informacje…",
+    "de": "Pläne, Erinnerungen, wichtige Informationen…",
+    "es": "Planes, recuerdos, información útil…",
+    "fr": "Projets, souvenirs, informations utiles…"
+  },
+  "Save changes": {
+    "en": "Save changes",
+    "pl": "Zapisz zmiany",
+    "de": "Änderungen speichern",
+    "es": "Guardar cambios",
+    "fr": "Enregistrer les modifications"
+  },
+  "Create trip": {
+    "en": "Create trip",
+    "pl": "Utwórz wycieczkę",
+    "de": "Reise erstellen",
+    "es": "Crear viaje",
+    "fr": "Créer le voyage"
+  },
+  "Cancel": {
+    "en": "Cancel",
+    "pl": "Anuluj",
+    "de": "Abbrechen",
+    "es": "Cancelar",
+    "fr": "Annuler"
+  },
+  "Choose at least one country.": {
+    "en": "Choose at least one country.",
+    "pl": "Wybierz co najmniej jeden kraj.",
+    "de": "Wähle mindestens ein Land.",
+    "es": "Elige al menos un país.",
+    "fr": "Choisissez au moins un pays."
+  },
+  "The end date cannot be before the start date.": {
+    "en": "The end date cannot be before the start date.",
+    "pl": "Data zakończenia nie może poprzedzać rozpoczęcia.",
+    "de": "Das Enddatum darf nicht vor dem Startdatum liegen.",
+    "es": "La fecha de fin no puede ser anterior al inicio.",
+    "fr": "La date de fin ne peut pas précéder la date de début."
+  },
+  "Customize appearance and manage your data.": {
+    "en": "Customize appearance and manage your data.",
+    "pl": "Dostosuj wygląd i zarządzaj swoimi danymi.",
+    "de": "Passe das Aussehen an und verwalte deine Daten.",
+    "es": "Personaliza el aspecto y gestiona tus datos.",
+    "fr": "Personnalisez l’apparence et gérez vos données."
+  },
+  "Appearance": {
+    "en": "Appearance",
+    "pl": "Wygląd",
+    "de": "Darstellung",
+    "es": "Apariencia",
+    "fr": "Apparence"
+  },
+  "App theme": {
+    "en": "App theme",
+    "pl": "Motyw aplikacji",
+    "de": "App-Design",
+    "es": "Tema de la aplicación",
+    "fr": "Thème de l’application"
+  },
+  "Light": {
+    "en": "Light",
+    "pl": "Jasny",
+    "de": "Hell",
+    "es": "Claro",
+    "fr": "Clair"
+  },
+  "Dark": {
+    "en": "Dark",
+    "pl": "Ciemny",
+    "de": "Dunkel",
+    "es": "Oscuro",
+    "fr": "Sombre"
+  },
+  "Map colors": {
+    "en": "Map colors",
+    "pl": "Kolory mapy",
+    "de": "Kartenfarben",
+    "es": "Colores del mapa",
+    "fr": "Couleurs de la carte"
+  },
+  "Atlas": {
+    "en": "Atlas",
+    "pl": "Atlas",
+    "de": "Atlas",
+    "es": "Atlas",
+    "fr": "Atlas"
+  },
+  "Ocean": {
+    "en": "Ocean",
+    "pl": "Ocean",
+    "de": "Ozean",
+    "es": "Océano",
+    "fr": "Océan"
+  },
+  "Forest": {
+    "en": "Forest",
+    "pl": "Las",
+    "de": "Wald",
+    "es": "Bosque",
+    "fr": "Forêt"
+  },
+  "Mono": {
+    "en": "Mono",
+    "pl": "Monochromatyczny",
+    "de": "Monochrom",
+    "es": "Monocromo",
+    "fr": "Monochrome"
+  },
+  "Account": {
+    "en": "Account",
+    "pl": "Konto",
+    "de": "Konto",
+    "es": "Cuenta",
+    "fr": "Compte"
+  },
+  "Guest mode": {
+    "en": "Guest mode",
+    "pl": "Tryb gościa",
+    "de": "Gastmodus",
+    "es": "Modo invitado",
+    "fr": "Mode invité"
+  },
+  "Signed-in account": {
+    "en": "Signed-in account",
+    "pl": "Zalogowane konto",
+    "de": "Angemeldetes Konto",
+    "es": "Cuenta conectada",
+    "fr": "Compte connecté"
+  },
+  "Your data stays in this browser. Returning to sign in does not delete it.": {
+    "en": "Your data stays in this browser. Returning to sign in does not delete it.",
+    "pl": "Dane pozostają w tej przeglądarce. Powrót do logowania ich nie usuwa.",
+    "de": "Deine Daten bleiben in diesem Browser. Die Rückkehr zur Anmeldung löscht sie nicht.",
+    "es": "Tus datos permanecen en este navegador. Volver al inicio de sesión no los elimina.",
+    "fr": "Vos données restent dans ce navigateur. Revenir à la connexion ne les supprime pas."
+  },
+  "Your map and trips are linked to your account.": {
+    "en": "Your map and trips are linked to your account.",
+    "pl": "Mapa i podróże są przypisane do Twojego konta.",
+    "de": "Deine Karte und Reisen sind mit deinem Konto verknüpft.",
+    "es": "Tu mapa y tus viajes están vinculados a tu cuenta.",
+    "fr": "Votre carte et vos voyages sont liés à votre compte."
+  },
+  "Please wait…": {
+    "en": "Please wait…",
+    "pl": "Chwila…",
+    "de": "Bitte warten…",
+    "es": "Espera…",
+    "fr": "Veuillez patienter…"
+  },
+  "Go to sign in": {
+    "en": "Go to sign in",
+    "pl": "Przejdź do logowania",
+    "de": "Zur Anmeldung",
+    "es": "Ir al inicio de sesión",
+    "fr": "Aller à la connexion"
+  },
+  "Sign out": {
+    "en": "Sign out",
+    "pl": "Wyloguj się",
+    "de": "Abmelden",
+    "es": "Cerrar sesión",
+    "fr": "Se déconnecter"
+  },
+  "Could not sign out. Try again.": {
+    "en": "Could not sign out. Try again.",
+    "pl": "Nie udało się wylogować. Spróbuj ponownie.",
+    "de": "Abmeldung fehlgeschlagen. Versuche es erneut.",
+    "es": "No se pudo cerrar sesión. Inténtalo de nuevo.",
+    "fr": "Impossible de se déconnecter. Réessayez."
+  },
+  "Your data": {
+    "en": "Your data",
+    "pl": "Twoje dane",
+    "de": "Deine Daten",
+    "es": "Tus datos",
+    "fr": "Vos données"
+  },
+  "Save a copy of places, trips and settings as a JSON file.": {
+    "en": "Save a copy of places, trips and settings as a JSON file.",
+    "pl": "Zapisz kopię miejsc, podróży i ustawień w pliku JSON.",
+    "de": "Speichere eine Kopie deiner Orte, Reisen und Einstellungen als JSON-Datei.",
+    "es": "Guarda una copia de lugares, viajes y ajustes en un archivo JSON.",
+    "fr": "Enregistrez une copie des lieux, voyages et paramètres dans un fichier JSON."
+  },
+  "Clearing browser data deletes local records.": {
+    "en": "Clearing browser data deletes local records.",
+    "pl": "Wyczyszczenie danych przeglądarki usuwa lokalne zapisy.",
+    "de": "Das Löschen der Browserdaten entfernt lokale Einträge.",
+    "es": "Borrar los datos del navegador elimina los registros locales.",
+    "fr": "Effacer les données du navigateur supprime les enregistrements locaux."
+  },
+  "Download backup": {
+    "en": "Download backup",
+    "pl": "Pobierz kopię danych",
+    "de": "Sicherung herunterladen",
+    "es": "Descargar copia",
+    "fr": "Télécharger une sauvegarde"
+  },
+  "Interface language": {
+    "en": "Interface language",
+    "pl": "Język interfejsu",
+    "de": "Sprache der Oberfläche",
+    "es": "Idioma de la interfaz",
+    "fr": "Langue de l’interface"
+  },
+  "Language changes apply immediately and are saved on this device.": {
+    "en": "Language changes apply immediately and are saved on this device.",
+    "pl": "Zmiany języka są widoczne od razu i zapamiętywane na tym urządzeniu.",
+    "de": "Sprachänderungen gelten sofort und werden auf diesem Gerät gespeichert.",
+    "es": "El idioma cambia al instante y se guarda en este dispositivo.",
+    "fr": "La langue change immédiatement et est enregistrée sur cet appareil."
+  },
+  "Traveler reference": {
+    "en": "Traveler reference",
+    "pl": "Informacje dla podróżnych",
+    "de": "Reiseinformationen",
+    "es": "Información para viajeros",
+    "fr": "Informations de voyage"
+  },
+  "Works with no signal — everything is stored on your device.": {
+    "en": "Works with no signal — everything is stored on your device.",
+    "pl": "Działa bez zasięgu — informacje są zapisane na urządzeniu.",
+    "de": "Funktioniert ohne Empfang — alles ist auf deinem Gerät gespeichert.",
+    "es": "Funciona sin señal: todo se guarda en tu dispositivo.",
+    "fr": "Fonctionne sans réseau : tout est stocké sur votre appareil."
+  },
+  "Search any country": {
+    "en": "Search any country",
+    "pl": "Szukaj dowolnego kraju",
+    "de": "Beliebiges Land suchen",
+    "es": "Buscar cualquier país",
+    "fr": "Rechercher un pays"
+  },
+  "No country matches “{0}”.": {
+    "en": "No country matches “{0}”.",
+    "pl": "Brak kraju pasującego do „{0}”.",
+    "de": "Kein Land passt zu „{0}“.",
+    "es": "Ningún país coincide con «{0}».",
+    "fr": "Aucun pays ne correspond à « {0} »."
+  },
+  "Emergency": {
+    "en": "Emergency",
+    "pl": "Numer alarmowy",
+    "de": "Notruf",
+    "es": "Emergencias",
+    "fr": "Urgences"
+  },
+  "Driving side": {
+    "en": "Driving side",
+    "pl": "Strona ruchu",
+    "de": "Fahrseite",
+    "es": "Lado de conducción",
+    "fr": "Sens de circulation"
+  },
+  "Left-hand side": {
+    "en": "Left-hand side",
+    "pl": "Lewostronny",
+    "de": "Linksverkehr",
+    "es": "Por la izquierda",
+    "fr": "À gauche"
+  },
+  "Right-hand side": {
+    "en": "Right-hand side",
+    "pl": "Prawostronny",
+    "de": "Rechtsverkehr",
+    "es": "Por la derecha",
+    "fr": "À droite"
+  },
+  "Power": {
+    "en": "Power",
+    "pl": "Elektryczność",
+    "de": "Strom",
+    "es": "Electricidad",
+    "fr": "Électricité"
+  },
+  "Type {0} · {1}": {
+    "en": "Type {0} · {1}",
+    "pl": "Typ {0} · {1}",
+    "de": "Typ {0} · {1}",
+    "es": "Tipo {0} · {1}",
+    "fr": "Type {0} · {1}"
+  },
+  "Tap water": {
+    "en": "Tap water",
+    "pl": "Woda z kranu",
+    "de": "Leitungswasser",
+    "es": "Agua del grifo",
+    "fr": "Eau du robinet"
+  },
+  "Currency": {
+    "en": "Currency",
+    "pl": "Waluta",
+    "de": "Währung",
+    "es": "Moneda",
+    "fr": "Devise"
+  },
+  "Capital · dial code": {
+    "en": "Capital · dial code",
+    "pl": "Stolica · numer kierunkowy",
+    "de": "Hauptstadt · Vorwahl",
+    "es": "Capital · prefijo",
+    "fr": "Capitale · indicatif"
+  },
+  "Generally safe to drink": {
+    "en": "Generally safe to drink",
+    "pl": "Zazwyczaj zdatna do picia",
+    "de": "In der Regel trinkbar",
+    "es": "Generalmente potable",
+    "fr": "Généralement potable"
+  },
+  "Drinkable in most areas — ask locally": {
+    "en": "Drinkable in most areas — ask locally",
+    "pl": "Zdatna do picia w większości miejsc — zapytaj na miejscu",
+    "de": "Meist trinkbar — vor Ort nachfragen",
+    "es": "Potable en la mayoría de zonas; consulta localmente",
+    "fr": "Potable dans la plupart des régions ; renseignez-vous sur place"
+  },
+  "Not recommended — drink bottled": {
+    "en": "Not recommended — drink bottled",
+    "pl": "Niezalecana — pij wodę butelkowaną",
+    "de": "Nicht empfohlen — Flaschenwasser trinken",
+    "es": "No recomendada: bebe agua embotellada",
+    "fr": "Déconseillée : buvez de l’eau en bouteille"
+  },
+  "No data available": {
+    "en": "No data available",
+    "pl": "Brak danych",
+    "de": "Keine Daten verfügbar",
+    "es": "Sin datos disponibles",
+    "fr": "Aucune donnée disponible"
+  },
+  "Passport stats": {
+    "en": "Passport stats",
+    "pl": "Statystyki podróży",
+    "de": "Reisestatistik",
+    "es": "Estadísticas de viaje",
+    "fr": "Statistiques de voyage"
+  },
+  "World explored": {
+    "en": "World explored",
+    "pl": "Odkryty świat",
+    "de": "Erkundete Welt",
+    "es": "Mundo explorado",
+    "fr": "Monde exploré"
+  },
+  "{0} of {1} countries · {2}% of land area": {
+    "en": "{0} of {1} countries · {2}% of land area",
+    "pl": "{0} z {1} krajów · {2}% powierzchni lądów",
+    "de": "{0} von {1} Ländern · {2}% der Landfläche",
+    "es": "{0} de {1} países · {2}% de superficie terrestre",
+    "fr": "{0} sur {1} pays · {2}% des terres"
+  },
+  "Continents": {
+    "en": "Continents",
+    "pl": "Kontynenty",
+    "de": "Kontinente",
+    "es": "Continentes",
+    "fr": "Continents"
+  },
+  "Milestones": {
+    "en": "Milestones",
+    "pl": "Osiągnięcia",
+    "de": "Meilensteine",
+    "es": "Logros",
+    "fr": "Étapes clés"
+  },
+  "Map image": {
+    "en": "Map image",
+    "pl": "Obraz mapy",
+    "de": "Kartenbild",
+    "es": "Imagen del mapa",
+    "fr": "Image de la carte"
+  },
+  "Link copied": {
+    "en": "Link copied",
+    "pl": "Link skopiowany",
+    "de": "Link kopiert",
+    "es": "Enlace copiado",
+    "fr": "Lien copié"
+  },
+  "Share link": {
+    "en": "Share link",
+    "pl": "Udostępnij link",
+    "de": "Link teilen",
+    "es": "Compartir enlace",
+    "fr": "Partager le lien"
+  },
+  "Countries collected": {
+    "en": "Countries collected",
+    "pl": "Odkryte kraje",
+    "de": "Gesammelte Länder",
+    "es": "Países visitados",
+    "fr": "Pays découverts"
+  },
+  "Reference data available offline for {0} territories.": {
+    "en": "Reference data available offline for {0} territories.",
+    "pl": "Dane dostępne offline dla {0} terytoriów.",
+    "de": "Offline-Informationen für {0} Gebiete verfügbar.",
+    "es": "Datos disponibles sin conexión para {0} territorios.",
+    "fr": "Données disponibles hors ligne pour {0} territoires."
+  },
+  "First stamp": {
+    "en": "First stamp",
+    "pl": "Pierwsza pieczątka",
+    "de": "Erster Stempel",
+    "es": "Primer sello",
+    "fr": "Premier tampon"
+  },
+  "Getting going": {
+    "en": "Getting going",
+    "pl": "Na dobry początek",
+    "de": "Es geht los",
+    "es": "En marcha",
+    "fr": "En route"
+  },
+  "Double digits": {
+    "en": "Double digits",
+    "pl": "Dwie cyfry",
+    "de": "Zweistellig",
+    "es": "Dos dígitos",
+    "fr": "Deux chiffres"
+  },
+  "Globe trotter": {
+    "en": "Globe trotter",
+    "pl": "Obieżyświat",
+    "de": "Weltenbummler",
+    "es": "Trotamundos",
+    "fr": "Globe-trotteur"
+  },
+  "Half century": {
+    "en": "Half century",
+    "pl": "Pół setki",
+    "de": "Halbes Jahrhundert",
+    "es": "Medio centenar",
+    "fr": "La cinquantaine"
+  },
+  "Centurion": {
+    "en": "Centurion",
+    "pl": "Setka",
+    "de": "Hundert erreicht",
+    "es": "Centenario",
+    "fr": "La centaine"
+  },
+  "Mark 1 country": {
+    "en": "Mark 1 country",
+    "pl": "Zaznacz 1 kraj",
+    "de": "Markiere 1 Land",
+    "es": "Marca 1 país",
+    "fr": "Marquez 1 pays"
+  },
+  "5 countries": {
+    "en": "5 countries",
+    "pl": "5 krajów",
+    "de": "5 Länder",
+    "es": "5 países",
+    "fr": "5 pays"
+  },
+  "10 countries": {
+    "en": "10 countries",
+    "pl": "10 krajów",
+    "de": "10 Länder",
+    "es": "10 países",
+    "fr": "10 pays"
+  },
+  "25 countries": {
+    "en": "25 countries",
+    "pl": "25 krajów",
+    "de": "25 Länder",
+    "es": "25 países",
+    "fr": "25 pays"
+  },
+  "50 countries": {
+    "en": "50 countries",
+    "pl": "50 krajów",
+    "de": "50 Länder",
+    "es": "50 países",
+    "fr": "50 pays"
+  },
+  "100 countries": {
+    "en": "100 countries",
+    "pl": "100 krajów",
+    "de": "100 Länder",
+    "es": "100 países",
+    "fr": "100 pays"
+  },
+  "Africa": {
+    "en": "Africa",
+    "pl": "Afryka",
+    "de": "Afrika",
+    "es": "África",
+    "fr": "Afrique"
+  },
+  "Americas": {
+    "en": "Americas",
+    "pl": "Ameryki",
+    "de": "Amerika",
+    "es": "América",
+    "fr": "Amériques"
+  },
+  "Asia": {
+    "en": "Asia",
+    "pl": "Azja",
+    "de": "Asien",
+    "es": "Asia",
+    "fr": "Asie"
+  },
+  "Europe": {
+    "en": "Europe",
+    "pl": "Europa",
+    "de": "Europa",
+    "es": "Europa",
+    "fr": "Europe"
+  },
+  "Oceania": {
+    "en": "Oceania",
+    "pl": "Oceania",
+    "de": "Ozeanien",
+    "es": "Oceanía",
+    "fr": "Océanie"
+  },
+  "Antarctic": {
+    "en": "Antarctic",
+    "pl": "Antarktyka",
+    "de": "Antarktis",
+    "es": "Antártida",
+    "fr": "Antarctique"
+  },
+  "Zoom in": {
+    "en": "Zoom in",
+    "pl": "Przybliż mapę",
+    "de": "Vergrößern",
+    "es": "Acercar",
+    "fr": "Agrandir"
+  },
+  "Zoom out": {
+    "en": "Zoom out",
+    "pl": "Oddal mapę",
+    "de": "Verkleinern",
+    "es": "Alejar",
+    "fr": "Réduire"
+  },
+  "Some region boundaries are temporarily unavailable.": {
+    "en": "Some region boundaries are temporarily unavailable.",
+    "pl": "Granice części regionów są chwilowo niedostępne.",
+    "de": "Einige Regionsgrenzen sind vorübergehend nicht verfügbar.",
+    "es": "Algunos límites regionales no están disponibles temporalmente.",
+    "fr": "Certaines limites régionales sont temporairement indisponibles."
+  },
+  "Page not found": {
+    "en": "Page not found",
+    "pl": "Nie znaleziono strony",
+    "de": "Seite nicht gefunden",
+    "es": "Página no encontrada",
+    "fr": "Page introuvable"
+  },
+  "The page you're looking for doesn't exist or has been moved.": {
+    "en": "The page you're looking for doesn't exist or has been moved.",
+    "pl": "Szukana strona nie istnieje lub została przeniesiona.",
+    "de": "Diese Seite existiert nicht oder wurde verschoben.",
+    "es": "La página no existe o se ha movido.",
+    "fr": "Cette page n’existe pas ou a été déplacée."
+  },
+  "Go home": {
+    "en": "Go home",
+    "pl": "Strona główna",
+    "de": "Zur Startseite",
+    "es": "Ir al inicio",
+    "fr": "Accueil"
+  },
+  "This page didn't load": {
+    "en": "This page didn't load",
+    "pl": "Nie udało się wczytać strony",
+    "de": "Diese Seite konnte nicht geladen werden",
+    "es": "No se pudo cargar la página",
+    "fr": "Cette page n’a pas pu être chargée"
+  },
+  "Something went wrong on our end. You can try refreshing or head back home.": {
+    "en": "Something went wrong on our end. You can try refreshing or head back home.",
+    "pl": "Wystąpił błąd. Odśwież stronę lub wróć na stronę główną.",
+    "de": "Ein Fehler ist aufgetreten. Lade die Seite neu oder kehre zur Startseite zurück.",
+    "es": "Se ha producido un error. Actualiza o vuelve al inicio.",
+    "fr": "Une erreur est survenue. Actualisez la page ou revenez à l’accueil."
+  },
+  "Try again": {
+    "en": "Try again",
+    "pl": "Spróbuj ponownie",
+    "de": "Erneut versuchen",
+    "es": "Intentar de nuevo",
+    "fr": "Réessayer"
+  },
+  "Close": {
+    "en": "Close",
+    "pl": "Zamknij",
+    "de": "Schließen",
+    "es": "Cerrar",
+    "fr": "Fermer"
+  },
+  "Choose backup file": {
+    "en": "Choose backup file",
+    "pl": "Wybierz plik kopii",
+    "de": "Sicherungsdatei auswählen",
+    "es": "Elegir archivo de copia",
+    "fr": "Choisir un fichier de sauvegarde"
+  },
+  "Load backup": {
+    "en": "Load backup",
+    "pl": "Wczytaj kopię danych",
+    "de": "Sicherung laden",
+    "es": "Cargar copia",
+    "fr": "Charger une sauvegarde"
+  },
+  "Import backup": {
+    "en": "Import backup",
+    "pl": "Importuj kopię",
+    "de": "Sicherung importieren",
+    "es": "Importar copia",
+    "fr": "Importer la sauvegarde"
+  },
+  "New trips: {0} · New places: {1}": {
+    "en": "New trips: {0} · New places: {1}",
+    "pl": "Nowe wycieczki: {0} · Nowe miejsca: {1}",
+    "de": "Neue Reisen: {0} · Neue Orte: {1}",
+    "es": "Viajes nuevos: {0} · Lugares nuevos: {1}",
+    "fr": "Nouveaux voyages : {0} · Nouveaux lieux : {1}"
+  },
+  "Existing entries will be kept. Appearance and language settings will be restored from the file.": {
+    "en": "Existing entries will be kept. Appearance and language settings will be restored from the file.",
+    "pl": "Obecne wpisy zostaną zachowane. Ustawienia wyglądu i języka zostaną przywrócone z pliku.",
+    "de": "Bestehende Einträge bleiben erhalten. Darstellung und Sprache werden aus der Datei wiederhergestellt.",
+    "es": "Se conservarán las entradas existentes. El aspecto y el idioma se restaurarán desde el archivo.",
+    "fr": "Les entrées existantes seront conservées. L’apparence et la langue seront restaurées depuis le fichier."
+  },
+  "Backup imported successfully.": {
+    "en": "Backup imported successfully.",
+    "pl": "Kopia została wczytana.",
+    "de": "Sicherung erfolgreich importiert.",
+    "es": "Copia importada correctamente.",
+    "fr": "Sauvegarde importée avec succès."
+  },
+  "Invalid backup. Choose a Scratchlas JSON backup file.": {
+    "en": "Invalid backup. Choose a Scratchlas JSON backup file.",
+    "pl": "Nieprawidłowa kopia. Wybierz plik kopii Scratchlas w formacie JSON.",
+    "de": "Ungültige Sicherung. Wähle eine Scratchlas-Sicherung im JSON-Format.",
+    "es": "Copia no válida. Elige una copia de Scratchlas en formato JSON.",
+    "fr": "Sauvegarde invalide. Choisissez un fichier JSON de sauvegarde Scratchlas."
+  },
+  "The backup file is too large (maximum 20 MB).": {
+    "en": "The backup file is too large (maximum 20 MB).",
+    "pl": "Plik kopii jest za duży (maksymalnie 20 MB).",
+    "de": "Die Sicherungsdatei ist zu groß (maximal 20 MB).",
+    "es": "El archivo es demasiado grande (máximo 20 MB).",
+    "fr": "Le fichier est trop volumineux (20 Mo maximum)."
+  },
+  "Could not import backup. Try again.": {
+    "en": "Could not import backup. Try again.",
+    "pl": "Nie udało się wczytać kopii. Spróbuj ponownie.",
+    "de": "Sicherung konnte nicht importiert werden. Versuche es erneut.",
+    "es": "No se pudo importar la copia. Inténtalo de nuevo.",
+    "fr": "Impossible d’importer la sauvegarde. Réessayez."
+  },
+  "Not enough browser storage to import this backup.": {
+    "en": "Not enough browser storage to import this backup.",
+    "pl": "Za mało miejsca w przeglądarce na wczytanie tej kopii.",
+    "de": "Nicht genügend Browserspeicher für diese Sicherung.",
+    "es": "No hay suficiente espacio en el navegador para esta copia.",
+    "fr": "Espace insuffisant dans le navigateur pour cette sauvegarde."
+  },
+  "Local test account": {
+    "en": "Local test account",
+    "pl": "Lokalne konto testowe",
+    "de": "Lokales Testkonto",
+    "es": "Cuenta de prueba local",
+    "fr": "Compte de test local"
+  },
+  "Login": {
+    "en": "Login",
+    "pl": "Login",
+    "de": "Benutzername",
+    "es": "Usuario",
+    "fr": "Identifiant"
+  },
+  "Email or test login": {
+    "en": "Email or test login",
+    "pl": "E-mail lub login testowy",
+    "de": "E-Mail oder Testbenutzername",
+    "es": "Correo o usuario de prueba",
+    "fr": "E-mail ou identifiant de test"
+  },
+  "Incorrect test login or password.": {
+    "en": "Incorrect test login or password.",
+    "pl": "Nieprawidłowy login testowy lub hasło.",
+    "de": "Testbenutzername oder Passwort falsch.",
+    "es": "Usuario de prueba o contraseña incorrectos.",
+    "fr": "Identifiant de test ou mot de passe incorrect."
+  },
+  "Demo profile with public credentials. Data stays in this browser, separate from guest data; it does not sync between devices.": {
+    "en": "Demo profile with public credentials. Data stays in this browser, separate from guest data; it does not sync between devices.",
+    "pl": "Profil demonstracyjny z publicznym loginem i hasłem. Dane są zapisane w tej przeglądarce, osobno od danych gościa, bez synchronizacji między urządzeniami.",
+    "de": "Demoprofil mit öffentlichen Zugangsdaten. Daten bleiben getrennt von Gastdaten in diesem Browser und werden nicht zwischen Geräten synchronisiert.",
+    "es": "Perfil de demostración con credenciales públicas. Los datos quedan en este navegador, separados de los del invitado, sin sincronización entre dispositivos.",
+    "fr": "Profil de démonstration avec identifiants publics. Les données restent dans ce navigateur, séparées des données invité, sans synchronisation entre appareils."
+  },
+  "Danger zone": {
+    "en": "Danger zone",
+    "pl": "Strefa niebezpieczna",
+    "de": "Gefahrenbereich",
+    "es": "Zona de peligro",
+    "fr": "Zone dangereuse"
+  },
+  "Reset trips": {
+    "en": "Reset trips",
+    "pl": "Resetuj wycieczki",
+    "de": "Reisen zurücksetzen",
+    "es": "Restablecer viajes",
+    "fr": "Réinitialiser les voyages"
+  },
+  "Reset map marks": {
+    "en": "Reset map marks",
+    "pl": "Resetuj oznaczenia mapy",
+    "de": "Kartenmarkierungen zurücksetzen",
+    "es": "Restablecer marcas del mapa",
+    "fr": "Réinitialiser les marques de la carte"
+  },
+  "Delete all data": {
+    "en": "Delete all data",
+    "pl": "Usuń wszystkie dane",
+    "de": "Alle Daten löschen",
+    "es": "Eliminar todos los datos",
+    "fr": "Supprimer toutes les données"
+  },
+  "Deletes all journal trips and unlinks places from them. Country and place marks are kept.": {
+    "en": "Deletes all journal trips and unlinks places from them. Country and place marks are kept.",
+    "pl": "Usuwa wszystkie wycieczki z dziennika i ich powiązania z miejscami. Oznaczenia krajów i miejsc pozostają.",
+    "de": "Löscht alle Reisen im Tagebuch und ihre Ortsverknüpfungen. Länder- und Ortsmarkierungen bleiben erhalten.",
+    "es": "Elimina los viajes del diario y sus vínculos con lugares. Conserva las marcas de países y lugares.",
+    "fr": "Supprime tous les voyages du carnet et leurs liens avec les lieux. Les marques des pays et lieux sont conservées."
+  },
+  "Deletes all country and place marks, including their notes and media. Journal trips and planned stops are kept.": {
+    "en": "Deletes all country and place marks, including their notes and media. Journal trips and planned stops are kept.",
+    "pl": "Usuwa oznaczenia krajów i miejsc wraz z ich notatkami i multimediami. Wycieczki i planowane przystanki pozostają.",
+    "de": "Löscht Länder- und Ortsmarkierungen samt Notizen und Medien. Reisen und geplante Stopps bleiben erhalten.",
+    "es": "Elimina marcas de países y lugares, incluidas notas y archivos multimedia. Conserva los viajes y paradas previstas.",
+    "fr": "Supprime les marques des pays et lieux, leurs notes et médias. Les voyages et étapes prévues sont conservés."
+  },
+  "Deletes trips, marks, notes and media in the current profile and resets appearance and language. The account itself is kept.": {
+    "en": "Deletes trips, marks, notes and media in the current profile and resets appearance and language. The account itself is kept.",
+    "pl": "Usuwa wycieczki, oznaczenia, notatki i multimedia bieżącego profilu oraz resetuje wygląd i język. Samo konto pozostaje.",
+    "de": "Löscht Reisen, Markierungen, Notizen und Medien im aktuellen Profil und setzt Darstellung und Sprache zurück. Das Konto bleibt bestehen.",
+    "es": "Elimina viajes, marcas, notas y archivos del perfil actual y restablece aspecto e idioma. La cuenta se conserva.",
+    "fr": "Supprime les voyages, marques, notes et médias du profil actuel et réinitialise l’apparence et la langue. Le compte est conservé."
+  },
+  "These actions cannot be undone. Download a backup first. Only the current profile is affected.": {
+    "en": "These actions cannot be undone. Download a backup first. Only the current profile is affected.",
+    "pl": "Tych operacji nie można cofnąć. Najpierw pobierz kopię danych. Zmiany dotyczą tylko bieżącego profilu.",
+    "de": "Diese Aktionen können nicht rückgängig gemacht werden. Lade zuerst eine Sicherung herunter. Nur das aktuelle Profil ist betroffen.",
+    "es": "Estas acciones no se pueden deshacer. Descarga una copia primero. Solo afectan al perfil actual.",
+    "fr": "Ces actions sont irréversibles. Téléchargez d’abord une sauvegarde. Seul le profil actuel est concerné."
+  },
+  "This deletes data from the current local profile.": {
+    "en": "This deletes data from the current local profile.",
+    "pl": "Dane zostaną usunięte z bieżącego profilu lokalnego.",
+    "de": "Dies löscht Daten aus dem aktuellen lokalen Profil.",
+    "es": "Se eliminarán datos del perfil local actual.",
+    "fr": "Les données seront supprimées du profil local actuel."
+  },
+  "This deletes data from your signed-in account, including the cloud copy.": {
+    "en": "This deletes data from your signed-in account, including the cloud copy.",
+    "pl": "Dane zostaną usunięte z zalogowanego konta, również z chmury.",
+    "de": "Dies löscht Daten aus deinem angemeldeten Konto einschließlich der Cloud-Kopie.",
+    "es": "Se eliminarán datos de tu cuenta conectada, incluida la copia en la nube.",
+    "fr": "Les données seront supprimées de votre compte connecté, y compris la copie dans le cloud."
+  },
+  "Type DELETE to confirm.": {
+    "en": "Type DELETE to confirm.",
+    "pl": "Wpisz DELETE, aby potwierdzić.",
+    "de": "Gib DELETE zur Bestätigung ein.",
+    "es": "Escribe DELETE para confirmar.",
+    "fr": "Saisissez DELETE pour confirmer."
+  },
+  "Confirm deletion": {
+    "en": "Confirm deletion",
+    "pl": "Potwierdź usunięcie",
+    "de": "Löschen bestätigen",
+    "es": "Confirmar eliminación",
+    "fr": "Confirmer la suppression"
+  },
+  "Data reset completed.": {
+    "en": "Data reset completed.",
+    "pl": "Reset danych zakończony.",
+    "de": "Daten erfolgreich zurückgesetzt.",
+    "es": "Datos restablecidos.",
+    "fr": "Réinitialisation terminée."
+  },
+  "Could not delete data. Try again.": {
+    "en": "Could not delete data. Try again.",
+    "pl": "Nie udało się usunąć danych. Spróbuj ponownie.",
+    "de": "Daten konnten nicht gelöscht werden. Versuche es erneut.",
+    "es": "No se pudieron eliminar los datos. Inténtalo de nuevo.",
+    "fr": "Impossible de supprimer les données. Réessayez."
+  },
+  "Shared map · Read-only preview": {
+    "en": "Shared map · Read-only preview",
+    "pl": "Udostępniona mapa · Tylko podgląd",
+    "de": "Geteilte Karte · Nur Lesezugriff",
+    "es": "Mapa compartido · Solo lectura",
+    "fr": "Carte partagée · Lecture seule"
+  },
+  "Exit preview": {
+    "en": "Exit preview",
+    "pl": "Zamknij podgląd",
+    "de": "Vorschau verlassen",
+    "es": "Salir de la vista previa",
+    "fr": "Quitter l’aperçu"
+  },
+  "This shared map is invalid or incomplete.": {
+    "en": "This shared map is invalid or incomplete.",
+    "pl": "Ta udostępniona mapa jest nieprawidłowa lub niekompletna.",
+    "de": "Diese geteilte Karte ist ungültig oder unvollständig.",
+    "es": "Este mapa compartido no es válido o está incompleto.",
+    "fr": "Cette carte partagée est invalide ou incomplète."
+  },
+  "This map is too large to share as a link.": {
+    "en": "This map is too large to share as a link.",
+    "pl": "Ta mapa jest zbyt duża, aby udostępnić ją w linku.",
+    "de": "Diese Karte ist zu groß, um sie als Link zu teilen.",
+    "es": "Este mapa es demasiado grande para compartirlo como enlace.",
+    "fr": "Cette carte est trop volumineuse pour être partagée par lien."
+  },
+  "Could not export the image. Try again.": {
+    "en": "Could not export the image. Try again.",
+    "pl": "Nie udało się pobrać obrazu. Spróbuj ponownie.",
+    "de": "Bildexport fehlgeschlagen. Versuche es erneut.",
+    "es": "No se pudo exportar la imagen. Inténtalo de nuevo.",
+    "fr": "Impossible d’exporter l’image. Réessayez."
+  },
+  "Could not create the shared link. Try again.": {
+    "en": "Could not create the shared link. Try again.",
+    "pl": "Nie udało się utworzyć linku. Spróbuj ponownie.",
+    "de": "Link konnte nicht erstellt werden. Versuche es erneut.",
+    "es": "No se pudo crear el enlace. Inténtalo de nuevo.",
+    "fr": "Impossible de créer le lien. Réessayez."
+  },
+  "Land area": {
+    "en": "Land area",
+    "pl": "Powierzchnia lądów",
+    "de": "Landfläche",
+    "es": "Superficie terrestre",
+    "fr": "Superficie terrestre"
+  },
+  "Trips": {
+    "en": "Trips",
+    "pl": "Wycieczki",
+    "de": "Reisen",
+    "es": "Viajes",
+    "fr": "Voyages"
+  },
+  "Shared map link": {
+    "en": "Shared map link",
+    "pl": "Link do udostępnionej mapy",
+    "de": "Link zur geteilten Karte",
+    "es": "Enlace del mapa compartido",
+    "fr": "Lien de la carte partagée"
+  },
+  "Copy link": {
+    "en": "Copy link",
+    "pl": "Kopiuj link",
+    "de": "Link kopieren",
+    "es": "Copiar enlace",
+    "fr": "Copier le lien"
+  },
+  "This link contains a read-only snapshot of countries, places, trips and notes, without photos or videos. Anyone with the link can view it.": {
+    "en": "This link contains a read-only snapshot of countries, places, trips and notes, without photos or videos. Anyone with the link can view it.",
+    "pl": "Link zawiera podgląd krajów, miejsc, wycieczek i notatek, bez zdjęć i filmów. Każdy, kto ma link, może je zobaczyć.",
+    "de": "Dieser Link enthält eine schreibgeschützte Momentaufnahme von Ländern, Orten, Reisen und Notizen ohne Fotos oder Videos. Jeder mit dem Link kann sie ansehen.",
+    "es": "Este enlace contiene una copia de solo lectura de países, lugares, viajes y notas, sin fotos ni vídeos. Cualquiera con el enlace puede verla.",
+    "fr": "Ce lien contient un instantané en lecture seule des pays, lieux, voyages et notes, sans photos ni vidéos. Toute personne disposant du lien peut le consulter."
+  },
+  "Change email": {
+    "en": "Change email",
+    "pl": "Zmień e-mail",
+    "de": "E-Mail ändern",
+    "es": "Cambiar correo",
+    "fr": "Modifier l’e-mail"
+  },
+  "Change password": {
+    "en": "Change password",
+    "pl": "Zmień hasło",
+    "de": "Passwort ändern",
+    "es": "Cambiar contraseña",
+    "fr": "Modifier le mot de passe"
+  },
+  "New email address": {
+    "en": "New email address",
+    "pl": "Nowy adres e-mail",
+    "de": "Neue E-Mail-Adresse",
+    "es": "Nuevo correo electrónico",
+    "fr": "Nouvelle adresse e-mail"
+  },
+  "New password": {
+    "en": "New password",
+    "pl": "Nowe hasło",
+    "de": "Neues Passwort",
+    "es": "Nueva contraseña",
+    "fr": "Nouveau mot de passe"
+  },
+  "Confirm new password": {
+    "en": "Confirm new password",
+    "pl": "Powtórz nowe hasło",
+    "de": "Neues Passwort bestätigen",
+    "es": "Confirmar nueva contraseña",
+    "fr": "Confirmer le nouveau mot de passe"
+  },
+  "Use at least 8 characters.": {
+    "en": "Use at least 8 characters.",
+    "pl": "Użyj co najmniej 8 znaków.",
+    "de": "Verwende mindestens 8 Zeichen.",
+    "es": "Usa al menos 8 caracteres.",
+    "fr": "Utilisez au moins 8 caractères."
+  },
+  "Passwords do not match.": {
+    "en": "Passwords do not match.",
+    "pl": "Hasła nie są takie same.",
+    "de": "Die Passwörter stimmen nicht überein.",
+    "es": "Las contraseñas no coinciden.",
+    "fr": "Les mots de passe ne correspondent pas."
+  },
+  "Password changed successfully.": {
+    "en": "Password changed successfully.",
+    "pl": "Hasło zostało zmienione.",
+    "de": "Passwort erfolgreich geändert.",
+    "es": "Contraseña cambiada correctamente.",
+    "fr": "Mot de passe modifié."
+  },
+  "Check your email to confirm the address change. Your current address stays active until confirmation.": {
+    "en": "Check your email to confirm the address change. Your current address stays active until confirmation.",
+    "pl": "Sprawdź pocztę i potwierdź zmianę adresu. Dotychczasowy adres pozostaje aktywny do potwierdzenia.",
+    "de": "Bestätige die Änderung per E-Mail. Deine bisherige Adresse bleibt bis zur Bestätigung aktiv.",
+    "es": "Confirma el cambio por correo. Tu dirección actual seguirá activa hasta la confirmación.",
+    "fr": "Confirmez le changement par e-mail. L’adresse actuelle reste active jusqu’à la confirmation."
+  },
+  "Could not update account details. Try again or sign in again.": {
+    "en": "Could not update account details. Try again or sign in again.",
+    "pl": "Nie udało się zmienić danych konta. Spróbuj ponownie lub zaloguj się jeszcze raz.",
+    "de": "Kontodaten konnten nicht geändert werden. Versuche es erneut oder melde dich erneut an.",
+    "es": "No se pudieron actualizar los datos. Inténtalo de nuevo o vuelve a iniciar sesión.",
+    "fr": "Impossible de modifier le compte. Réessayez ou reconnectez-vous."
+  },
+  "The demo account uses fixed public credentials. Email and password changes are available for a personal account.": {
+    "en": "The demo account uses fixed public credentials. Email and password changes are available for a personal account.",
+    "pl": "Konto demonstracyjne ma stały publiczny login i hasło. Zmiana e-maila i hasła jest dostępna na osobistym koncie.",
+    "de": "Das Demokonto hat feste öffentliche Zugangsdaten. E-Mail und Passwort können bei einem persönlichen Konto geändert werden.",
+    "es": "La cuenta de demostración usa credenciales públicas fijas. Los cambios de correo y contraseña están disponibles en una cuenta personal.",
+    "fr": "Le compte de démonstration utilise des identifiants publics fixes. Un compte personnel permet de modifier l’e-mail et le mot de passe."
+  },
+  "Sign in to a personal account to manage your email and password.": {
+    "en": "Sign in to a personal account to manage your email and password.",
+    "pl": "Zaloguj się na osobiste konto, aby zarządzać e-mailem i hasłem.",
+    "de": "Melde dich mit einem persönlichen Konto an, um E-Mail und Passwort zu verwalten.",
+    "es": "Inicia sesión en una cuenta personal para gestionar correo y contraseña.",
+    "fr": "Connectez-vous à un compte personnel pour gérer votre e-mail et votre mot de passe."
+  }
+}

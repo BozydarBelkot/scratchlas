@@ -9,12 +9,16 @@ import {
 } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import type { User } from "@supabase/supabase-js";
+import { mergeBackup, type Backup } from "./backup";
+import { validTestCredentials } from "./local-account";
+import { resetData, type ResetScope } from "./reset-data";
 
 export type Status = "visited" | "wish" | "lived";
 export type PlaceKind = "country" | "region" | "city" | "attraction";
 
 // Rows saved before the kinds were split may still say "landmark".
-const normalizeKind = (k: string): PlaceKind => (k === "landmark" ? "attraction" : (k as PlaceKind));
+const normalizeKind = (k: string): PlaceKind =>
+  k === "landmark" ? "attraction" : (k as PlaceKind);
 
 export interface Media {
   id: string;
@@ -38,9 +42,20 @@ export interface Place {
   createdAt: number;
 }
 
+export interface TripStop {
+  name: string;
+  kind: Exclude<PlaceKind, "country">;
+  lat: number;
+  lng: number;
+}
+export interface TripDestination {
+  country: string;
+  stops: TripStop[];
+}
 export interface Trip {
   id: string;
   title: string;
+  itinerary?: TripDestination[];
   start: string;
   end?: string;
   notes?: string;
@@ -58,6 +73,10 @@ export interface AppState {
 
 const EMPTY: AppState = { places: [], trips: [], mode: "light", mapTheme: "atlas" };
 const KEY = "scratchmap.v1";
+const GUEST_KEY = "scratchmap.guest.v1";
+const GUEST_SESSION_KEY = "scratchmap.guest.active";
+const TEST_KEY = "scratchmap.test.v1";
+const TEST_SESSION_KEY = "scratchmap.test.active";
 
 export const uid = () => Math.random().toString(36).slice(2, 10);
 
@@ -80,6 +99,7 @@ interface TripRow {
   id: string;
   user_id: string;
   title: string;
+  itinerary?: TripDestination[];
   start_date: string | null;
   end_date: string | null;
   notes: string | null;
@@ -131,6 +151,7 @@ const placeToRow = (p: Place, userId: string) => ({
 const tripFromRow = (r: TripRow): Trip => ({
   id: r.id,
   title: r.title,
+  itinerary: r.itinerary ?? [],
   start: r.start_date ?? "",
   end: r.end_date ?? undefined,
   notes: r.notes ?? undefined,
@@ -140,20 +161,19 @@ const tripToRow = (t: Trip, userId: string) => ({
   id: t.id,
   user_id: userId,
   title: t.title,
+  itinerary: t.itinerary ?? [],
   start_date: t.start || null,
   end_date: t.end ?? null,
   notes: t.notes ?? null,
 });
 
-const logErr =
-  (what: string) =>
-  (r: { error?: { message: string } | null } | null) => {
-    if (r?.error) console.error(`[cloud sync] ${what}:`, r.error.message);
-  };
+const logErr = (what: string) => (r: { error?: { message: string } | null } | null) => {
+  if (r?.error) console.error(`[cloud sync] ${what}:`, r.error.message);
+};
 
-function loadLocal(): AppState {
+function loadLocal(key = KEY): AppState {
   try {
-    const raw = localStorage.getItem(KEY);
+    const raw = localStorage.getItem(key);
     if (raw) {
       const parsed = { ...EMPTY, ...JSON.parse(raw) } as AppState;
       parsed.places = parsed.places.map((p) => ({ ...p, kind: normalizeKind(p.kind) }));
@@ -167,8 +187,14 @@ function loadLocal(): AppState {
 }
 
 interface Ctx {
+  isPreview: boolean;
   state: AppState;
   ready: boolean;
+  isGuest: boolean;
+  isTestAccount: boolean;
+  signInTestAccount: (login: string, password: string) => boolean;
+  resetData: (scope: ResetScope) => Promise<void>;
+  continueAsGuest: () => void;
   user: User | null | undefined; // undefined = session still resolving
   signOut: () => Promise<void>;
   setCountryStatus: (cca2: string, name: string, status: Status | null) => void;
@@ -178,25 +204,40 @@ interface Ctx {
   addMedia: (placeId: string, media: Media) => void;
   removeMedia: (placeId: string, mediaId: string) => void;
   addTrip: (t: Omit<Trip, "id">) => Trip;
+  updateTrip: (id: string, t: Omit<Trip, "id">) => void;
   removeTrip: (id: string) => void;
   setMode: (m: Mode) => void;
   setMapTheme: (t: MapTheme) => void;
+  importBackup: (backup: Backup) => Promise<void>;
   statusByCountry: Record<string, Status>;
   justMarked: string | null;
 }
 
-const StoreContext = createContext<Ctx | null>(null);
+export const StoreContext = createContext<Ctx | null>(null);
 
 export function StoreProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<AppState>(EMPTY);
   const [ready, setReady] = useState(false);
+  const [isGuest, setIsGuest] = useState(false);
+  const [isTestAccount, setIsTestAccount] = useState(false);
   const [user, setUser] = useState<User | null | undefined>(undefined);
   const [justMarked, setJustMarked] = useState<string | null>(null);
   const userRef = useRef<User | null>(null);
-  userRef.current = user ?? null;
+  userRef.current = isGuest ? null : (user ?? null);
+
+  useEffect(() => {
+    try {
+      const test = localStorage.getItem(TEST_SESSION_KEY) === "1";
+      setIsTestAccount(test);
+      setIsGuest(test || localStorage.getItem(GUEST_SESSION_KEY) === "1");
+    } catch {
+      /* Storage may be unavailable. */
+    }
+  }, []);
 
   // Track the auth session (fires immediately with the current session).
   useEffect(() => {
+    if (isGuest) return;
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
@@ -204,14 +245,21 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       setUser((prev) => {
         if (prev === undefined) return next;
         // ignore token refreshes for the same user so data isn't refetched
-        return (prev?.id ?? null) === (next?.id ?? null) ? prev : next;
+        return (prev?.id ?? null) === (next?.id ?? null) && prev?.email === next?.email
+          ? prev
+          : next;
       });
     });
     return () => subscription.unsubscribe();
-  }, []);
+  }, [isGuest]);
 
   // Hydrate data once auth resolves, and whenever the signed-in user changes.
   useEffect(() => {
+    if (isGuest) {
+      setState(loadLocal(isTestAccount ? TEST_KEY : GUEST_KEY));
+      setReady(true);
+      return;
+    }
     if (user === undefined) return;
     let cancelled = false;
 
@@ -280,17 +328,20 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     return () => {
       cancelled = true;
     };
-  }, [user]);
+  }, [user, isGuest, isTestAccount]);
 
   // Local cache so the map opens instantly and works offline.
   useEffect(() => {
-    if (!ready) return;
+    if (!ready || (!isGuest && !user)) return;
     try {
-      localStorage.setItem(KEY, JSON.stringify(state));
+      localStorage.setItem(
+        isGuest ? (isTestAccount ? TEST_KEY : GUEST_KEY) : KEY,
+        JSON.stringify(state),
+      );
     } catch {
       /* quota */
     }
-  }, [state, ready]);
+  }, [state, ready, isGuest, isTestAccount, user]);
 
   useEffect(() => {
     if (!ready) return;
@@ -306,10 +357,52 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     }
 
     return {
+      isPreview: false,
       state,
       ready,
+      isGuest,
+      isTestAccount,
+      signInTestAccount: (login, password) => {
+        if (!validTestCredentials(login, password)) return false;
+        setReady(false);
+        userRef.current = null;
+        try {
+          localStorage.setItem(TEST_SESSION_KEY, "1");
+          localStorage.removeItem(GUEST_SESSION_KEY);
+        } catch {
+          /* The demo profile still works for this session. */
+        }
+        setIsTestAccount(true);
+        setIsGuest(true);
+        return true;
+      },
+      continueAsGuest: () => {
+        setReady(false);
+        userRef.current = null;
+        try {
+          localStorage.setItem(GUEST_SESSION_KEY, "1");
+          localStorage.removeItem(TEST_SESSION_KEY);
+        } catch {
+          /* Optional. */
+        }
+        setIsTestAccount(false);
+        setIsGuest(true);
+      },
       user,
       signOut: async () => {
+        if (isGuest) {
+          try {
+            localStorage.removeItem(GUEST_SESSION_KEY);
+            localStorage.removeItem(TEST_SESSION_KEY);
+          } catch {
+            /* Optional. */
+          }
+          setReady(false);
+          setUser(null);
+          setIsGuest(false);
+          setIsTestAccount(false);
+          return;
+        }
         // clear the local cache first so another account can't inherit it
         try {
           const cached = loadLocal();
@@ -450,10 +543,109 @@ export function StoreProvider({ children }: { children: ReactNode }) {
           from("trips").delete().eq("id", id).then(logErr("remove trip"));
         }
       },
+      updateTrip: (id, t) => {
+        const trip = { ...t, id };
+        setState((s) => ({ ...s, trips: s.trips.map((old) => (old.id === id ? trip : old)) }));
+        const u = userRef.current;
+        if (u) from("trips").upsert(tripToRow(trip, u.id)).then(logErr("update trip"));
+      },
       setMode: (mode) => setState((s) => ({ ...s, mode })),
       setMapTheme: (mapTheme) => setState((s) => ({ ...s, mapTheme })),
+      resetData: async (scope) => {
+        if (!ready || (!isGuest && !user)) throw new Error("Could not delete data. Try again.");
+        const u = userRef.current;
+        if (u) {
+          const check = (result: { error?: unknown }) => {
+            if (result.error) throw new Error("Could not delete data. Try again.");
+          };
+          if (scope === "all" || scope === "places") {
+            check(await from("places").delete().eq("user_id", u.id));
+            if (userRef.current?.id !== u.id) throw new Error("Could not delete data. Try again.");
+            setState((current) => resetData(current, "places"));
+          }
+          if (scope === "all" || scope === "trips") {
+            check(await from("places").update({ trip_id: null }).eq("user_id", u.id));
+            check(await from("trips").delete().eq("user_id", u.id));
+          }
+          if (userRef.current?.id !== u.id) throw new Error("Could not delete data. Try again.");
+        }
+        const next = resetData(state, scope);
+        localStorage.setItem(
+          isGuest ? (isTestAccount ? TEST_KEY : GUEST_KEY) : KEY,
+          JSON.stringify(next),
+        );
+        setState((current) => resetData(current, scope));
+        setJustMarked(null);
+      },
+      importBackup: async (backup) => {
+        if (!ready || (!isGuest && !user)) throw new Error("Could not import backup. Try again.");
+        const merged = mergeBackup(state, backup);
+        const key = isGuest ? (isTestAccount ? TEST_KEY : GUEST_KEY) : KEY;
+        const u = userRef.current;
+        // Check storage capacity before importing anything into the account.
+        try {
+          localStorage.setItem(key, JSON.stringify(merged.state));
+          if (u) localStorage.setItem(key, JSON.stringify(state));
+        } catch {
+          throw new Error("Not enough browser storage to import this backup.");
+        }
+        let tripsSaved = false;
+        let placesSaved = false;
+        try {
+          if (u) {
+            if (merged.trips.length) {
+              const result = await from("trips").insert(
+                merged.trips.map((t) => tripToRow(t, u.id)),
+              );
+              if (result.error) throw result.error;
+              tripsSaved = true;
+            }
+            if (merged.places.length) {
+              const result = await from("places").insert(
+                merged.places.map((p) => placeToRow(p, u.id)),
+              );
+              if (result.error) throw result.error;
+              placesSaved = true;
+            }
+            const media = merged.places.flatMap((p) =>
+              p.media.map((m) => ({
+                id: m.id,
+                place_id: p.id,
+                url: m.url,
+                kind: m.kind,
+                caption: m.caption ?? null,
+              })),
+            );
+            if (media.length) {
+              const result = await from("place_media").insert(media);
+              if (result.error) throw result.error;
+            }
+            if (userRef.current?.id !== u.id) throw new Error("Account changed during import");
+            localStorage.setItem(key, JSON.stringify(merged.state));
+          }
+          setState((current) => mergeBackup(current, backup).state);
+        } catch (error) {
+          console.error("[backup] import failed", error);
+          // Remove only rows successfully added by this import, never existing data.
+          if (placesSaved)
+            await from("places")
+              .delete()
+              .in(
+                "id",
+                merged.places.map((p) => p.id),
+              );
+          if (tripsSaved)
+            await from("trips")
+              .delete()
+              .in(
+                "id",
+                merged.trips.map((t) => t.id),
+              );
+          throw new Error("Could not import backup. Try again.");
+        }
+      },
     };
-  }, [state, ready, user, justMarked]);
+  }, [state, ready, user, isGuest, isTestAccount, justMarked]);
 
   return <StoreContext.Provider value={value}>{children}</StoreContext.Provider>;
 }

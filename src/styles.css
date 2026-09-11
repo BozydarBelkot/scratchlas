@@ -85,30 +85,30 @@
 }
 
 .dark {
-  --background: oklch(0.17 0.014 260);
-  --foreground: oklch(0.95 0.008 90);
-  --card: oklch(0.215 0.016 260);
-  --card-foreground: oklch(0.95 0.008 90);
-  --popover: oklch(0.215 0.016 260);
-  --popover-foreground: oklch(0.95 0.008 90);
+  --background: oklch(0.19 0.018 65);
+  --foreground: oklch(0.95 0.018 85);
+  --card: oklch(0.235 0.022 65);
+  --card-foreground: oklch(0.95 0.018 85);
+  --popover: oklch(0.235 0.022 65);
+  --popover-foreground: oklch(0.95 0.018 85);
   --primary: oklch(0.93 0.01 90);
-  --primary-foreground: oklch(0.2 0.015 260);
-  --secondary: oklch(0.26 0.016 260);
-  --secondary-foreground: oklch(0.95 0.008 90);
-  --muted: oklch(0.26 0.016 260);
-  --muted-foreground: oklch(0.68 0.015 260);
-  --accent: oklch(0.3 0.02 260);
-  --accent-foreground: oklch(0.95 0.008 90);
+  --primary-foreground: oklch(0.21 0.02 65);
+  --secondary: oklch(0.28 0.022 65);
+  --secondary-foreground: oklch(0.95 0.018 85);
+  --muted: oklch(0.28 0.022 65);
+  --muted-foreground: oklch(0.7 0.028 75);
+  --accent: oklch(0.32 0.03 65);
+  --accent-foreground: oklch(0.95 0.018 85);
   --destructive: oklch(0.62 0.19 25);
   --destructive-foreground: oklch(0.98 0.008 90);
   --border: oklch(1 0 0 / 12%);
   --input: oklch(1 0 0 / 16%);
   --ring: oklch(0.7 0.13 55);
 
-  --map-ocean: oklch(0.2 0.016 260);
-  --map-land: oklch(0.29 0.018 260);
-  --map-stroke: oklch(0.38 0.02 260);
-  --map-grid: oklch(0.26 0.016 260);
+  --map-ocean: oklch(0.215 0.02 65);
+  --map-land: oklch(0.31 0.027 70);
+  --map-stroke: oklch(0.41 0.032 70);
+  --map-grid: oklch(0.28 0.022 65);
   --map-visited: oklch(0.74 0.16 55);
   --map-wish: oklch(0.7 0.12 225);
   --map-lived: oklch(0.72 0.15 150);
@@ -116,6 +116,17 @@
 }
 
 /* ---- Map colour themes ---- */
+[data-maptheme="atlas"] {
+  --map-visited: oklch(0.66 0.16 48);
+  --map-wish: oklch(0.62 0.1 220);
+  --map-lived: oklch(0.52 0.13 150);
+}
+.dark[data-maptheme="atlas"],
+.dark [data-maptheme="atlas"] {
+  --map-visited: oklch(0.74 0.16 55);
+  --map-wish: oklch(0.7 0.12 225);
+  --map-lived: oklch(0.72 0.15 150);
+}
 [data-maptheme="ocean"] {
   --map-visited: oklch(0.62 0.14 232);
   --map-wish: oklch(0.68 0.12 190);
@@ -131,7 +142,8 @@
   --map-wish: oklch(0.72 0.01 260);
   --map-lived: oklch(0.56 0.01 260);
 }
-.dark[data-maptheme="mono"] {
+.dark[data-maptheme="mono"],
+.dark [data-maptheme="mono"] {
   --map-visited: oklch(0.92 0.005 90);
   --map-wish: oklch(0.55 0.01 260);
   --map-lived: oklch(0.74 0.008 260);
@@ -171,6 +183,42 @@
 }
 
 /* ---- Map ---- */
+/* Subtle scrollbars follow the current light/dark palette. */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in oklch, var(--muted-foreground) 40%, transparent) transparent;
+}
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: color-mix(in oklch, var(--muted-foreground) 40%, transparent);
+  border: 2px solid transparent;
+  border-radius: 999px;
+  background-clip: padding-box;
+}
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--muted-foreground);
+}
+::-webkit-scrollbar-button {
+  display: none;
+}
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+@supports selector(::-webkit-scrollbar) {
+  /* Chromium's standard scrollbar properties otherwise override the rounded
+     thumb and the hidden arrow buttons above. */
+  * {
+    scrollbar-width: auto;
+    scrollbar-color: auto;
+  }
+}
+
 .country-shape {
   transition:
     fill 420ms cubic-bezier(0.22, 1, 0.36, 1),
@@ -179,6 +227,16 @@
 }
 .country-shape:hover {
   opacity: 0.82;
+}
+/* SVG focus outlines use the country's rectangular bounds. Highlight its
+   actual geometry instead when navigating with the keyboard. */
+.country-shape:focus {
+  outline: none;
+}
+.country-shape:focus-visible {
+  stroke: var(--foreground);
+  stroke-width: 2px;
+  vector-effect: non-scaling-stroke;
 }
 
 @keyframes scratch-pop {
@@ -213,4 +271,62 @@
 }
 .rise-in {
   animation: rise-in 380ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes country-menu-enter {
+  from {
+    transform: translateY(calc(100% + 5rem));
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+@keyframes country-menu-exit {
+  from {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(calc(100% + 5rem));
+    opacity: 0;
+  }
+}
+.country-menu[data-state="open"] {
+  animation: country-menu-enter 360ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.country-menu[data-state="closed"] {
+  animation: country-menu-exit 300ms cubic-bezier(0.4, 0, 0.6, 1) both;
+  pointer-events: none;
+}
+.country-places {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transition:
+    grid-template-rows 320ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 200ms ease;
+}
+.country-places[data-expanded="true"] {
+  grid-template-rows: 1fr;
+  opacity: 1;
+}
+.country-menu-scroll {
+  height: 224px;
+  transition: height 320ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.country-menu-scroll[data-expanded="true"] {
+  height: min(65dvh, 600px);
+}
+@media (prefers-reduced-motion: reduce) {
+  .country-menu[data-state] {
+    animation-duration: 1ms;
+  }
+  .country-places {
+    transition: none;
+  }
+  .country-menu-scroll {
+    transition: none;
+  }
 }

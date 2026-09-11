@@ -1,3 +1,5 @@
+import { useI18n } from "@/lib/i18n";
+import { CountryFlag } from "@/components/CountryFlag";
 import { useMemo, useState } from "react";
 import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -5,6 +7,8 @@ import { ReferenceCard } from "@/components/ReferenceCard";
 import { COUNTRIES } from "@/lib/countries";
 
 export function GuidePanel() {
+  const { tr } = useI18n();
+
   const [q, setQ] = useState("");
   const results = useMemo(() => {
     const s = q.trim().toLowerCase();
@@ -20,9 +24,9 @@ export function GuidePanel() {
   return (
     <div className="space-y-4">
       <div>
-        <h2 className="text-2xl font-display">Traveler reference</h2>
+        <h2 className="text-2xl font-display">{tr("Traveler reference")}</h2>
         <p className="text-sm text-muted-foreground">
-          Works with no signal — everything is stored on your device.
+          {tr("Works with no signal — everything is stored on your device.")}
         </p>
       </div>
 
@@ -31,7 +35,7 @@ export function GuidePanel() {
         <Input
           value={q}
           onChange={(e) => setQ(e.target.value)}
-          placeholder="Search any country"
+          placeholder={tr("Search any country")}
           className="pl-9"
         />
       </div>
@@ -40,16 +44,16 @@ export function GuidePanel() {
         {results.map((c) => (
           <section key={c.cca2} className="space-y-2">
             <h3 className="text-lg font-display">
-              <span aria-hidden className="mr-1">
-                {c.flag}
-              </span>
+              <CountryFlag code={c.cca2} className="mr-2" />
               {c.name}
             </h3>
             <ReferenceCard c={c} />
           </section>
         ))}
         {results.length === 0 && (
-          <p className="text-sm text-muted-foreground">No country matches “{q}”.</p>
+          <p className="text-sm text-muted-foreground">
+            {tr("No country matches “{0}”.", { 0: q })}
+          </p>
         )}
       </div>
     </div>
