@@ -1,4 +1,5 @@
 import { useI18n } from "@/lib/i18n";
+import { transitionScreen } from "@/lib/screen-transition";
 import { useState } from "react";
 import { Globe2, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -6,12 +7,11 @@ import { lovable } from "@/integrations/lovable";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useStore } from "@/lib/store";
-import { TEST_LOGIN, TEST_PASSWORD } from "@/lib/local-account";
 
 export function AuthScreen() {
   const { tr } = useI18n();
 
-  const { continueAsGuest, signInTestAccount } = useStore();
+  const { continueAsGuest } = useStore();
   const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -24,11 +24,6 @@ export function AuthScreen() {
     setBusy(true);
     setError(null);
     setNotice(null);
-    if (mode === "signin" && !email.includes("@")) {
-      if (!signInTestAccount(email, password)) setError("Incorrect test login or password.");
-      setBusy(false);
-      return;
-    }
     if (mode === "signin") {
       const { error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) setError(error.message);
@@ -51,7 +46,10 @@ export function AuthScreen() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4">
+    <div className="auth-screen flex min-h-screen items-center justify-center bg-background px-4">
+      <button type="button" className="auth-skip" onClick={() => transitionScreen(continueAsGuest)}>
+        {tr("Skip")}
+      </button>
       <div className="w-full max-w-sm">
         <div className="mb-8 text-center">
           <Globe2 className="mx-auto mb-3 size-8 text-muted-foreground" strokeWidth={1.4} />
@@ -81,10 +79,10 @@ export function AuthScreen() {
 
           <form onSubmit={submit} className="space-y-3">
             <Input
-              type={mode === "signin" ? "text" : "email"}
+              type="email"
               required
-              aria-label={tr(mode === "signin" ? "Email or test login" : "Email")}
-              placeholder={tr(mode === "signin" ? "Email or test login" : "Email")}
+              aria-label={tr("Email")}
+              placeholder={tr("Email")}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               autoComplete="username"
@@ -121,21 +119,6 @@ export function AuthScreen() {
           </button>
         </div>
 
-        <div className="mt-4 rounded-xl border border-border p-3 text-sm">
-          <p className="font-medium">{tr("Local test account")}</p>
-          <p>
-            {tr("Login")}: <code>{TEST_LOGIN}</code> · {tr("Password")}:{" "}
-            <code>{TEST_PASSWORD}</code>
-          </p>
-          <p className="mt-1 text-xs text-muted-foreground">
-            {tr(
-              "Demo profile with public credentials. Data stays in this browser, separate from guest data; it does not sync between devices.",
-            )}
-          </p>
-        </div>
-        <Button type="button" variant="secondary" className="mt-4 w-full" onClick={continueAsGuest}>
-          {tr("Skip sign in")}
-        </Button>
         <p className="mt-2 text-center text-[11px] text-muted-foreground">
           {tr(
             "Without an account, data is saved only in this browser. Clearing browser data will remove it.",

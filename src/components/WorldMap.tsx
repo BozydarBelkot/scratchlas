@@ -20,13 +20,11 @@ const world = feature(
   (topo as unknown as { objects: { countries: never } }).objects.countries,
 ) as unknown as FeatureCollection<Geometry, { name: string }>;
 
-const FEATURES = world.features;
+const BASE_FEATURES = world.features;
 const GRATICULE = geoGraticule10();
 
 // Microstates (Vatican, San Marino, Monaco…) are too small for the 110m
 // geometry — render them as tappable dots at their capital coordinates.
-const PRESENT_CCN3 = new Set(FEATURES.map((f) => String(f.id).padStart(3, "0")));
-const MICROSTATES = COUNTRIES.filter((c) => !PRESENT_CCN3.has(c.ccn3));
 
 const W = 880;
 const H = 470;
@@ -46,9 +44,18 @@ interface Props {
   selected?: string | null;
   pins: Place[];
   mode: MapMode;
+  decorative?: boolean;
+  autoRotate?: boolean;
 }
 
-export function WorldMap({ onSelect, selected, pins, mode }: Props) {
+export function WorldMap({
+  onSelect,
+  selected,
+  pins,
+  mode,
+  decorative = false,
+  autoRotate = false,
+}: Props) {
   const { tr } = useI18n();
 
   const { areas, missing } = useRegionAreas(pins);
@@ -56,8 +63,47 @@ export function WorldMap({ onSelect, selected, pins, mode }: Props) {
   const { statusByCountry, justMarked } = useStore();
   const [rotation, setRotation] = useState<[number, number]>([-10, -18]);
   const [zoom, setZoom] = useState(1);
+  const [compact, setCompact] = useState(false);
+  useEffect(() => {
+    const media = window.matchMedia("(max-width: 700px)");
+    const update = () => setCompact(media.matches);
+    update();
+    media.addEventListener("change", update);
+    return () => media.removeEventListener("change", update);
+  }, []);
+  const FEATURES = BASE_FEATURES;
+  const MICROSTATES = useMemo(() => {
+    const present = new Set(FEATURES.map((f) => String(f.id).padStart(3, "0")));
+    return COUNTRIES.filter((c) => !present.has(c.ccn3));
+  }, [FEATURES]);
   const rotationRef = useRef(rotation);
   rotationRef.current = rotation;
+  const host = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!autoRotate) return;
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
+    let visible = true,
+      last = 0,
+      frame = 0;
+    const observer = new IntersectionObserver(([entry]) => {
+      visible = entry.isIntersecting;
+    });
+    if (host.current) observer.observe(host.current);
+    const tick = (time: number) => {
+      if (time - last >= 50) {
+        const delta = Math.min(time - last, 70);
+        last = time;
+        if (visible && !document.hidden && !reduced.matches)
+          setRotation((r) => [r[0] + delta * 0.003, r[1]]);
+      }
+      frame = requestAnimationFrame(tick);
+    };
+    frame = requestAnimationFrame(tick);
+    return () => {
+      cancelAnimationFrame(frame);
+      observer.disconnect();
+    };
+  }, [autoRotate]);
   const rotationFrame = useRef<number | null>(null);
   const drag = useRef<{ x: number; y: number; r: [number, number]; z: number } | null>(null);
 
@@ -90,7 +136,7 @@ export function WorldMap({ onSelect, selected, pins, mode }: Props) {
     // Project boundary lines, not polygon fills: clipping at the horizon must not
     // invent an outline along the edge of the globe.
     return rings.length ? path({ type: "MultiLineString", coordinates: rings }) : null;
-  }, [selected, path]);
+  }, [selected, path, FEATURES]);
 
   const paths = useMemo(
     () =>
@@ -103,7 +149,7 @@ export function WorldMap({ onSelect, selected, pins, mode }: Props) {
           d: path(f),
         };
       }).filter((p) => p.d),
-    [path],
+    [path, FEATURES],
   );
 
   const burst = useMemo(() => {
@@ -117,7 +163,7 @@ export function WorldMap({ onSelect, selected, pins, mode }: Props) {
     if (!ll) return null;
     const c = projection(ll);
     return c ? { x: c[0], y: c[1] } : null;
-  }, [justMarked, projection]);
+  }, [justMarked, projection, FEATURES]);
 
   // auto-rotate globe toward a newly selected country
   useEffect(() => {
@@ -231,8 +277,12 @@ export function WorldMap({ onSelect, selected, pins, mode }: Props) {
   const scaleTransform = `translate(${W / 2} ${H / 2}) scale(${zoom}) translate(${-W / 2} ${-H / 2})`;
 
   return (
-    <div className="relative h-full w-full select-none overflow-hidden">
-      <div className="absolute left-3 top-3 z-10 flex gap-2">
+    <div
+      ref={host}
+      className="relative h-full w-full select-none overflow-hidden"
+      style={{ background: "var(--map-ocean)" }}
+    >
+      <div hidden={decorative} className="absolute left-3 top-3 z-10 flex gap-2">
         <button
           type="button"
           aria-label={tr("Zoom in")}
@@ -257,8 +307,8 @@ export function WorldMap({ onSelect, selected, pins, mode }: Props) {
       )}
       <svg
         data-scratch-map=""
-        viewBox={`0 0 ${W} ${H}`}
-        preserveAspectRatio="xMidYMid slice"
+        viewBox={compact || decorative ? `${(W - H) / 2} 0 ${H} ${H}` : `0 0 ${W} ${H}`}
+        preserveAspectRatio={compact || decorative ? "xMidYMid meet" : "xMidYMid slice"}
         className="h-full w-full touch-none"
         style={{ background: "var(--map-ocean)" }}
         onPointerDown={onPointerDown}

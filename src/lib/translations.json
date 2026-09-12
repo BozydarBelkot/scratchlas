@@ -1524,5 +1524,180 @@
     "de": "Melde dich mit einem persönlichen Konto an, um E-Mail und Passwort zu verwalten.",
     "es": "Inicia sesión en una cuenta personal para gestionar correo y contraseña.",
     "fr": "Connectez-vous à un compte personnel pour gérer votre e-mail et votre mot de passe."
+  },
+  "Open app": {
+    "en": "Open app",
+    "pl": "Otwórz aplikację",
+    "de": "App öffnen",
+    "es": "Abrir aplicación",
+    "fr": "Ouvrir l’application"
+  },
+  "Your travels.": {
+    "en": "Your travels.",
+    "pl": "Twoje podróże.",
+    "de": "Deine Reisen.",
+    "es": "Tus viajes.",
+    "fr": "Vos voyages."
+  },
+  "A world of stories.": {
+    "en": "A world of stories.",
+    "pl": "Świat pełen historii.",
+    "de": "Eine Welt voller Geschichten.",
+    "es": "Un mundo de historias.",
+    "fr": "Un monde d’histoires."
+  },
+  "Start your journey": {
+    "en": "Start your journey",
+    "pl": "Rozpocznij podróż",
+    "de": "Starte deine Reise",
+    "es": "Empieza tu viaje",
+    "fr": "Commencez votre voyage"
+  },
+  "Continue your journey": {
+    "en": "Continue your journey",
+    "pl": "Kontynuuj podróż",
+    "de": "Setze deine Reise fort",
+    "es": "Continúa tu viaje",
+    "fr": "Continuez votre voyage"
+  },
+  "FOR THE PLACES THAT STAY WITH YOU": {
+    "en": "FOR THE PLACES THAT STAY WITH YOU",
+    "pl": "DLA MIEJSC, KTÓRE ZOSTAJĄ W PAMIĘCI",
+    "de": "FÜR ORTE, DIE IN ERINNERUNG BLEIBEN",
+    "es": "PARA LOS LUGARES QUE DEJAN HUELLA",
+    "fr": "POUR LES LIEUX QUI VOUS MARQUENT"
+  },
+  "Turn everywhere you have been into a world that is uniquely yours. Collect places, plan your next adventure and keep the memories close.": {
+    "en": "Turn everywhere you have been into a world that is uniquely yours. Collect places, plan your next adventure and keep the memories close.",
+    "pl": "Stwórz własny świat z odwiedzonych miejsc. Zbieraj wspomnienia, planuj kolejne przygody i wracaj do ulubionych chwil.",
+    "de": "Gestalte deine Welt aus den Orten deiner Reisen. Sammle Orte, plane dein nächstes Abenteuer und bewahre Erinnerungen.",
+    "es": "Crea tu propio mundo con los lugares que has visitado. Guarda destinos, planea tu próxima aventura y conserva tus recuerdos.",
+    "fr": "Créez votre monde à partir des lieux visités. Collectionnez les destinations, préparez votre prochaine aventure et gardez vos souvenirs."
+  },
+  "Countries, cities and the little places in between.": {
+    "en": "Countries, cities and the little places in between.",
+    "pl": "Kraje, miasta i małe miejsca pomiędzy nimi.",
+    "de": "Länder, Städte und die kleinen Orte dazwischen.",
+    "es": "Países, ciudades y pequeños rincones.",
+    "fr": "Pays, villes et petits coins entre les deux."
+  },
+  "A world of possibilities": {
+    "en": "A world of possibilities",
+    "pl": "Świat możliwości",
+    "de": "Eine Welt voller Möglichkeiten",
+    "es": "Un mundo de posibilidades",
+    "fr": "Un monde de possibilités"
+  },
+  "Illustrative travel map": {
+    "en": "Illustrative travel map",
+    "pl": "Przykładowa mapa podróży",
+    "de": "Beispiel einer Reisekarte",
+    "es": "Mapa de viajes de ejemplo",
+    "fr": "Exemple de carte de voyages"
+  },
+  "An animated globe with example destinations": {
+    "en": "An animated globe with example destinations",
+    "pl": "Animowany globus z przykładowymi miejscami",
+    "de": "Animierter Globus mit Beispielzielen",
+    "es": "Globo animado con destinos de ejemplo",
+    "fr": "Globe animé avec des destinations illustratives"
+  },
+  "Pause animation": {
+    "en": "Pause animation",
+    "pl": "Wstrzymaj animację",
+    "de": "Animation pausieren",
+    "es": "Pausar animación",
+    "fr": "Mettre l’animation en pause"
+  },
+  "Resume animation": {
+    "en": "Resume animation",
+    "pl": "Wznów animację",
+    "de": "Animation fortsetzen",
+    "es": "Reanudar animación",
+    "fr": "Reprendre l’animation"
+  },
+  "Discover Scratchlas": {
+    "en": "Discover Scratchlas",
+    "pl": "Poznaj Scratchlas",
+    "de": "Entdecke Scratchlas",
+    "es": "Descubre Scratchlas",
+    "fr": "Découvrez Scratchlas"
+  },
+  "Make the world yours": {
+    "en": "Make the world yours",
+    "pl": "Twój własny świat",
+    "de": "Mach die Welt zu deiner",
+    "es": "Haz tuyo el mundo",
+    "fr": "Faites du monde le vôtre"
+  },
+  "Keep every chapter": {
+    "en": "Keep every chapter",
+    "pl": "Zachowaj każdy rozdział",
+    "de": "Bewahre jedes Kapitel",
+    "es": "Conserva cada capítulo",
+    "fr": "Gardez chaque chapitre"
+  },
+  "See your story grow": {
+    "en": "See your story grow",
+    "pl": "Obserwuj swoją historię",
+    "de": "Sieh deine Geschichte wachsen",
+    "es": "Mira crecer tu historia",
+    "fr": "Voyez votre histoire grandir"
+  },
+  "Mark the countries you have visited, the places you call home and everywhere you dream of going.": {
+    "en": "Mark the countries you have visited, the places you call home and everywhere you dream of going.",
+    "pl": "Zaznacz odwiedzone kraje, miejsca, które nazywasz domem, i wymarzone kierunki.",
+    "de": "Markiere besuchte Länder, deine Heimatorte und deine Traumziele.",
+    "es": "Marca los países visitados, los lugares que llamas hogar y tus destinos soñados.",
+    "fr": "Marquez les pays visités, les lieux où vous avez vécu et vos destinations rêvées."
+  },
+  "Build your trip itinerary, arrange your stops and keep your memories together in a personal travel journal.": {
+    "en": "Build your trip itinerary, arrange your stops and keep your memories together in a personal travel journal.",
+    "pl": "Ułóż trasę, uporządkuj przystanki i zachowaj wspomnienia we własnym dzienniku podróży.",
+    "de": "Plane deine Reiseroute, ordne Zwischenstopps und sammle Erinnerungen in deinem Reisetagebuch.",
+    "es": "Crea itinerarios, ordena tus paradas y guarda recuerdos en tu diario de viajes.",
+    "fr": "Créez vos itinéraires, organisez vos étapes et conservez vos souvenirs dans votre carnet de voyage."
+  },
+  "Explore your travel stats, download your map or share a read-only view of your adventures.": {
+    "en": "Explore your travel stats, download your map or share a read-only view of your adventures.",
+    "pl": "Sprawdzaj statystyki, pobierz obraz mapy lub udostępnij podgląd swoich przygód.",
+    "de": "Entdecke deine Reisestatistiken, lade deine Karte herunter oder teile deine Abenteuer als schreibgeschützte Ansicht.",
+    "es": "Explora tus estadísticas, descarga tu mapa o comparte tus aventuras en modo de solo lectura.",
+    "fr": "Consultez vos statistiques, téléchargez votre carte ou partagez vos aventures en lecture seule."
+  },
+  "Your next chapter starts somewhere.": {
+    "en": "Your next chapter starts somewhere.",
+    "pl": "Kolejny rozdział gdzieś się zaczyna.",
+    "de": "Dein nächstes Kapitel beginnt irgendwo.",
+    "es": "Tu próximo capítulo empieza en algún lugar.",
+    "fr": "Votre prochain chapitre commence quelque part."
+  },
+  "Find your somewhere": {
+    "en": "Find your somewhere",
+    "pl": "Znajdź swoje miejsce",
+    "de": "Finde deinen Ort",
+    "es": "Encuentra tu lugar",
+    "fr": "Trouvez votre destination"
+  },
+  "A little curiosity. A whole world.": {
+    "en": "A little curiosity. A whole world.",
+    "pl": "Odrobina ciekawości. Cały świat.",
+    "de": "Ein wenig Neugier. Eine ganze Welt.",
+    "es": "Un poco de curiosidad. Todo un mundo.",
+    "fr": "Un peu de curiosité. Tout un monde."
+  },
+  "Main navigation": {
+    "en": "Main navigation",
+    "pl": "Nawigacja główna",
+    "de": "Hauptnavigation",
+    "es": "Navegación principal",
+    "fr": "Navigation principale"
+  },
+  "Skip": {
+    "en": "Skip",
+    "pl": "Pomiń",
+    "de": "Überspringen",
+    "es": "Omitir",
+    "fr": "Passer"
   }
 }

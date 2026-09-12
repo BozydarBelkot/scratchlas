@@ -10,7 +10,6 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import type { User } from "@supabase/supabase-js";
 import { mergeBackup, type Backup } from "./backup";
-import { validTestCredentials } from "./local-account";
 import { resetData, type ResetScope } from "./reset-data";
 
 export type Status = "visited" | "wish" | "lived";
@@ -75,8 +74,6 @@ const EMPTY: AppState = { places: [], trips: [], mode: "light", mapTheme: "atlas
 const KEY = "scratchmap.v1";
 const GUEST_KEY = "scratchmap.guest.v1";
 const GUEST_SESSION_KEY = "scratchmap.guest.active";
-const TEST_KEY = "scratchmap.test.v1";
-const TEST_SESSION_KEY = "scratchmap.test.active";
 
 export const uid = () => Math.random().toString(36).slice(2, 10);
 
@@ -191,8 +188,6 @@ interface Ctx {
   state: AppState;
   ready: boolean;
   isGuest: boolean;
-  isTestAccount: boolean;
-  signInTestAccount: (login: string, password: string) => boolean;
   resetData: (scope: ResetScope) => Promise<void>;
   continueAsGuest: () => void;
   user: User | null | undefined; // undefined = session still resolving
@@ -219,7 +214,6 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<AppState>(EMPTY);
   const [ready, setReady] = useState(false);
   const [isGuest, setIsGuest] = useState(false);
-  const [isTestAccount, setIsTestAccount] = useState(false);
   const [user, setUser] = useState<User | null | undefined>(undefined);
   const [justMarked, setJustMarked] = useState<string | null>(null);
   const userRef = useRef<User | null>(null);
@@ -227,9 +221,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     try {
-      const test = localStorage.getItem(TEST_SESSION_KEY) === "1";
-      setIsTestAccount(test);
-      setIsGuest(test || localStorage.getItem(GUEST_SESSION_KEY) === "1");
+      setIsGuest(localStorage.getItem(GUEST_SESSION_KEY) === "1");
     } catch {
       /* Storage may be unavailable. */
     }
@@ -256,7 +248,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   // Hydrate data once auth resolves, and whenever the signed-in user changes.
   useEffect(() => {
     if (isGuest) {
-      setState(loadLocal(isTestAccount ? TEST_KEY : GUEST_KEY));
+      setState(loadLocal(GUEST_KEY));
       setReady(true);
       return;
     }
@@ -328,20 +320,17 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     return () => {
       cancelled = true;
     };
-  }, [user, isGuest, isTestAccount]);
+  }, [user, isGuest]);
 
   // Local cache so the map opens instantly and works offline.
   useEffect(() => {
     if (!ready || (!isGuest && !user)) return;
     try {
-      localStorage.setItem(
-        isGuest ? (isTestAccount ? TEST_KEY : GUEST_KEY) : KEY,
-        JSON.stringify(state),
-      );
+      localStorage.setItem(isGuest ? GUEST_KEY : KEY, JSON.stringify(state));
     } catch {
       /* quota */
     }
-  }, [state, ready, isGuest, isTestAccount, user]);
+  }, [state, ready, isGuest, user]);
 
   useEffect(() => {
     if (!ready) return;
@@ -361,31 +350,14 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       state,
       ready,
       isGuest,
-      isTestAccount,
-      signInTestAccount: (login, password) => {
-        if (!validTestCredentials(login, password)) return false;
-        setReady(false);
-        userRef.current = null;
-        try {
-          localStorage.setItem(TEST_SESSION_KEY, "1");
-          localStorage.removeItem(GUEST_SESSION_KEY);
-        } catch {
-          /* The demo profile still works for this session. */
-        }
-        setIsTestAccount(true);
-        setIsGuest(true);
-        return true;
-      },
       continueAsGuest: () => {
         setReady(false);
         userRef.current = null;
         try {
           localStorage.setItem(GUEST_SESSION_KEY, "1");
-          localStorage.removeItem(TEST_SESSION_KEY);
         } catch {
           /* Optional. */
         }
-        setIsTestAccount(false);
         setIsGuest(true);
       },
       user,
@@ -393,14 +365,12 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         if (isGuest) {
           try {
             localStorage.removeItem(GUEST_SESSION_KEY);
-            localStorage.removeItem(TEST_SESSION_KEY);
           } catch {
             /* Optional. */
           }
           setReady(false);
           setUser(null);
           setIsGuest(false);
-          setIsTestAccount(false);
           return;
         }
         // clear the local cache first so another account can't inherit it
@@ -570,17 +540,14 @@ export function StoreProvider({ children }: { children: ReactNode }) {
           if (userRef.current?.id !== u.id) throw new Error("Could not delete data. Try again.");
         }
         const next = resetData(state, scope);
-        localStorage.setItem(
-          isGuest ? (isTestAccount ? TEST_KEY : GUEST_KEY) : KEY,
-          JSON.stringify(next),
-        );
+        localStorage.setItem(isGuest ? GUEST_KEY : KEY, JSON.stringify(next));
         setState((current) => resetData(current, scope));
         setJustMarked(null);
       },
       importBackup: async (backup) => {
         if (!ready || (!isGuest && !user)) throw new Error("Could not import backup. Try again.");
         const merged = mergeBackup(state, backup);
-        const key = isGuest ? (isTestAccount ? TEST_KEY : GUEST_KEY) : KEY;
+        const key = isGuest ? GUEST_KEY : KEY;
         const u = userRef.current;
         // Check storage capacity before importing anything into the account.
         try {
@@ -645,7 +612,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         }
       },
     };
-  }, [state, ready, user, isGuest, isTestAccount, justMarked]);
+  }, [state, ready, user, isGuest, justMarked]);
 
   return <StoreContext.Provider value={value}>{children}</StoreContext.Provider>;
 }

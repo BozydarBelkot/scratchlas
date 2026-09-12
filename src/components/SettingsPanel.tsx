@@ -17,8 +17,7 @@ const THEMES: { id: MapTheme; label: string }[] = [
 export function SettingsPanel() {
   const { tr, language, setLanguage } = useI18n();
 
-  const { state, setMode, setMapTheme, user, isGuest, isTestAccount, signOut, importBackup } =
-    useStore();
+  const { state, setMode, setMapTheme, user, isGuest, signOut, importBackup } = useStore();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const fileInput = useRef<HTMLInputElement>(null);
@@ -188,30 +187,18 @@ export function SettingsPanel() {
         </h3>
         <div>
           <p className="break-all text-sm font-medium">
-            {isTestAccount
-              ? tr("Local test account")
-              : isGuest
-                ? tr("Guest mode")
-                : (user?.email ?? tr("Signed-in account"))}
+            {isGuest ? tr("Guest mode") : (user?.email ?? tr("Signed-in account"))}
           </p>
           <p className="mt-1 text-sm text-muted-foreground">
-            {isTestAccount
-              ? tr(
-                  "Demo profile with public credentials. Data stays in this browser, separate from guest data; it does not sync between devices.",
-                )
-              : isGuest
-                ? tr("Your data stays in this browser. Returning to sign in does not delete it.")
-                : tr("Your map and trips are linked to your account.")}
+            {isGuest
+              ? tr("Your data stays in this browser. Returning to sign in does not delete it.")
+              : tr("Your map and trips are linked to your account.")}
           </p>
         </div>
         <AccountSecurity />
         <Button variant="outline" disabled={busy} onClick={() => void leave()}>
           <LogOut className="size-4" />
-          {busy
-            ? tr("Please wait…")
-            : isGuest && !isTestAccount
-              ? tr("Go to sign in")
-              : tr("Sign out")}
+          {busy ? tr("Please wait…") : isGuest ? tr("Go to sign in") : tr("Sign out")}
         </Button>
         {error && (
           <p role="alert" className="text-sm text-destructive">

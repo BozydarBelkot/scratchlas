@@ -6,7 +6,7 @@ import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 
 export function AccountSecurity() {
-  const { user, isGuest, isTestAccount } = useStore();
+  const { user, isGuest } = useStore();
   const { tr } = useI18n();
   const [panel, setPanel] = useState<"email" | "password" | null>(null);
   const [email, setEmail] = useState("");
@@ -18,11 +18,7 @@ export function AccountSecurity() {
   if (isGuest || !user)
     return (
       <p className="text-xs text-muted-foreground">
-        {tr(
-          isTestAccount
-            ? "The demo account uses fixed public credentials. Email and password changes are available for a personal account."
-            : "Sign in to a personal account to manage your email and password.",
-        )}
+        {tr("Sign in to a personal account to manage your email and password.")}
       </p>
     );
   async function save(event: React.FormEvent) {

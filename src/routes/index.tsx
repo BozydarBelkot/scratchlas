@@ -1,5 +1,6 @@
 import { useI18n } from "@/lib/i18n";
-import { useMemo, useState } from "react";
+import { transitionScreen } from "@/lib/screen-transition";
+import { useEffect, useMemo, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { BookOpen, Flag, LifeBuoy, Settings, Map as MapIcon, Trophy } from "lucide-react";
 import { useStore } from "@/lib/store";
@@ -9,6 +10,7 @@ import { CountriesPanel } from "@/components/CountriesPanel";
 import { JournalPanel } from "@/components/JournalPanel";
 import { StatsPanel } from "@/components/StatsPanel";
 import { GuidePanel } from "@/components/GuidePanel";
+import { LandingPage } from "@/components/LandingPage";
 import { AuthScreen } from "@/components/AuthScreen";
 import { SettingsPanel } from "@/components/SettingsPanel";
 import { SharedSession } from "@/components/SharedSession";
@@ -54,6 +56,13 @@ function App() {
   const { tr } = useI18n();
 
   const { state, ready, user, isGuest, isPreview } = useStore();
+  const [entered, setEntered] = useState(false);
+  useEffect(() => {
+    setEntered(window.location.hash === "#app");
+    const sync = () => transitionScreen(() => setEntered(window.location.hash === "#app"));
+    window.addEventListener("hashchange", sync);
+    return () => window.removeEventListener("hashchange", sync);
+  }, []);
   const [tab, setTab] = useState<Tab>("map");
   const [selected, setSelected] = useState<string | null>(null);
   const [mapMode, setMapMode] = useState<MapMode>("world");
@@ -63,12 +72,21 @@ function App() {
     [state.places],
   );
 
-  if (!user && !isGuest && !isPreview) return <AuthScreen />;
+  if (!isPreview && !entered) return <LandingPage signedIn={!!user || isGuest} />;
+  if (!user && !isGuest && !isPreview)
+    return (
+      <>
+        <a href="#" className="auth-home">
+          ← {tr("Go home")}
+        </a>
+        <AuthScreen />
+      </>
+    );
 
   const isMap = tab === "map";
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="app-shell min-h-screen bg-background">
       {isPreview && (
         <div className="sticky top-0 z-30 flex h-12 items-center justify-between gap-3 border-b border-border bg-card px-4 py-2 text-xs sm:text-sm">
           <span>{tr("Shared map · Read-only preview")}</span>
@@ -84,6 +102,15 @@ function App() {
               <WorldMap onSelect={setSelected} selected={selected} pins={pins} mode={mapMode} />
             )}
           </main>
+          {!isPreview && (
+            <a
+              href="#"
+              className="fixed right-4 top-4 z-10 rounded-full border border-border bg-background/85 px-4 py-2 text-sm font-semibold tracking-tight shadow-sm backdrop-blur"
+              aria-label={tr("Go home")}
+            >
+              Scratchlas ↗
+            </a>
+          )}
         </>
       ) : (
         <>
@@ -92,7 +119,9 @@ function App() {
           >
             <div className="mx-auto flex max-w-3xl items-center justify-between px-4 py-3">
               <div>
-                <h1 className="text-xl font-display leading-none">Scratchlas</h1>
+                <a href="#" className="text-xl font-semibold tracking-tight leading-none">
+                  Scratchlas
+                </a>
                 <p className="text-[11px] text-muted-foreground">
                   {tr("Your world, one scratch at a time")}
                 </p>
@@ -100,7 +129,7 @@ function App() {
             </div>
           </header>
 
-          <main className="mx-auto max-w-3xl px-4 py-4 pb-24">
+          <main key={tab} className="app-panel mx-auto max-w-3xl px-4 py-6 pb-28">
             {tab === "countries" && <CountriesPanel />}
             {tab === "journal" && <JournalPanel />}
             {tab === "stats" && <StatsPanel />}
@@ -117,7 +146,10 @@ function App() {
         onClose={() => setSelected(null)}
       />
 
-      <nav className="fixed inset-x-0 bottom-0 z-20 border-t border-border bg-background/95 backdrop-blur">
+      <nav
+        aria-label={tr("Main navigation")}
+        className="app-navigation fixed inset-x-0 bottom-0 z-20 border-t border-border bg-background/95 backdrop-blur"
+      >
         <div className="mx-auto flex max-w-3xl">
           {TABS.filter((t) => !isPreview || t.id !== "settings").map((t) => (
             <button
