@@ -1,4 +1,5 @@
 import { useI18n } from "@/lib/i18n";
+import { globePose } from "@/lib/globe-pose";
 import { useRegionAreas } from "@/lib/region-areas";
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
@@ -46,6 +47,7 @@ interface Props {
   mode: MapMode;
   decorative?: boolean;
   autoRotate?: boolean;
+  preservePose?: boolean;
 }
 
 export function WorldMap({
@@ -55,22 +57,24 @@ export function WorldMap({
   mode,
   decorative = false,
   autoRotate = false,
+  preservePose = false,
 }: Props) {
   const { tr } = useI18n();
 
-  const { areas, missing } = useRegionAreas(pins);
+  const visiblePins = useMemo(
+    () => (mode === "places" && selected ? pins.filter((p) => p.country === selected) : pins),
+    [pins, mode, selected],
+  );
+  const { areas, missing } = useRegionAreas(visiblePins);
   const maxZoom = mode === "places" ? MAX_ZOOM_PLACES : MAX_ZOOM_WORLD;
   const { statusByCountry, justMarked } = useStore();
-  const [rotation, setRotation] = useState<[number, number]>([-10, -18]);
-  const [zoom, setZoom] = useState(1);
-  const [compact, setCompact] = useState(false);
+  const [rotation, setRotation] = useState<[number, number]>(() =>
+    preservePose ? [...globePose.rotation] : [-10, -18],
+  );
   useEffect(() => {
-    const media = window.matchMedia("(max-width: 700px)");
-    const update = () => setCompact(media.matches);
-    update();
-    media.addEventListener("change", update);
-    return () => media.removeEventListener("change", update);
-  }, []);
+    if (preservePose) globePose.rotation = rotation;
+  }, [rotation, preservePose]);
+  const [zoom, setZoom] = useState(1);
   const FEATURES = BASE_FEATURES;
   const MICROSTATES = useMemo(() => {
     const present = new Set(FEATURES.map((f) => String(f.id).padStart(3, "0")));
@@ -279,8 +283,8 @@ export function WorldMap({
   return (
     <div
       ref={host}
-      className="relative h-full w-full select-none overflow-hidden"
-      style={{ background: "var(--map-ocean)" }}
+      className="world-map-host relative h-full w-full select-none overflow-hidden"
+      style={{ background: decorative ? "transparent" : "var(--map-ocean)" }}
     >
       <div hidden={decorative} className="absolute left-3 top-3 z-10 flex gap-2">
         <button
@@ -305,220 +309,225 @@ export function WorldMap({
           {tr("Some region boundaries are temporarily unavailable.")}
         </p>
       )}
-      <svg
-        data-scratch-map=""
-        viewBox={compact || decorative ? `${(W - H) / 2} 0 ${H} ${H}` : `0 0 ${W} ${H}`}
-        preserveAspectRatio={compact || decorative ? "xMidYMid meet" : "xMidYMid slice"}
-        className="h-full w-full touch-none"
-        style={{ background: "var(--map-ocean)" }}
-        onPointerDown={onPointerDown}
-        onPointerMove={onPointerMove}
-        onPointerUp={onPointerUp}
-        onPointerCancel={onPointerUp}
-        onPointerLeave={onPointerUp}
-        onWheel={(e) =>
-          setZoom((z) => Math.min(maxZoom, Math.max(MIN_ZOOM, z * Math.exp(-e.deltaY * 0.0015))))
-        }
+      <div
+        className="world-globe-stage"
+        style={{ viewTransitionName: preservePose ? "scratchlas-globe" : "none" }}
       >
-        <g transform={scaleTransform}>
-          <path
-            d={path({ type: "Sphere" }) ?? undefined}
-            fill="var(--map-ocean)"
-            stroke="var(--map-stroke)"
-            strokeWidth={1 / zoom}
-          />
-          <path
-            d={path(GRATICULE) ?? undefined}
-            fill="none"
-            stroke="var(--map-grid)"
-            strokeWidth={0.5 / zoom}
-          />
-          {paths.map((p) => (
+        <svg
+          data-scratch-map=""
+          viewBox={`${(W - H) / 2} 0 ${H} ${H}`}
+          preserveAspectRatio="xMidYMid meet"
+          className="h-full w-full touch-none"
+          style={{ overflow: "visible", background: "transparent" }}
+          onPointerDown={onPointerDown}
+          onPointerMove={onPointerMove}
+          onPointerUp={onPointerUp}
+          onPointerCancel={onPointerUp}
+          onPointerLeave={onPointerUp}
+          onWheel={(e) =>
+            setZoom((z) => Math.min(maxZoom, Math.max(MIN_ZOOM, z * Math.exp(-e.deltaY * 0.0015))))
+          }
+        >
+          <g transform={scaleTransform}>
             <path
-              key={p.id}
-              d={p.d ?? undefined}
-              className="country-shape"
-              role={p.cca2 ? "button" : undefined}
-              aria-label={p.name}
-              aria-pressed={p.cca2 ? selected === p.cca2 : undefined}
-              tabIndex={p.cca2 ? 0 : undefined}
-              onKeyDown={(event) => {
-                if (p.cca2 && (event.key === "Enter" || event.key === " ")) {
-                  event.preventDefault();
-                  onSelect(p.cca2);
-                }
-              }}
-              fill={statusFill(p.cca2)}
+              d={path({ type: "Sphere" }) ?? undefined}
+              fill="var(--map-ocean)"
               stroke="var(--map-stroke)"
-              strokeWidth={0.4 / zoom}
-              onClick={() => {
-                const wasDrag = moved.current;
-                moved.current = false;
-                if (!wasDrag && p.cca2) onSelect(p.cca2);
-              }}
-            >
-              <title>{p.name}</title>
-            </path>
-          ))}
-          {mode === "places" &&
-            globeAreas.map((area, i) => (
+              strokeWidth={1 / zoom}
+            />
+            <path
+              d={path(GRATICULE) ?? undefined}
+              fill="none"
+              stroke="var(--map-grid)"
+              strokeWidth={0.5 / zoom}
+            />
+            {paths.map((p) => (
               <path
-                key={area.properties.name + i}
-                d={path(area) ?? undefined}
-                fill={
-                  area.properties.status === "wish"
-                    ? "var(--map-wish)"
-                    : area.properties.status === "lived"
-                      ? "var(--map-lived)"
-                      : "var(--map-visited)"
-                }
-                fillOpacity={0.3}
-                stroke="var(--foreground)"
-                strokeOpacity={0.6}
-                strokeWidth={0.8 / zoom}
-                pointerEvents="none"
-              >
-                <title>{area.properties.name}</title>
-              </path>
-            ))}
-          {MICROSTATES.map((m) => {
-            const [lat, lng] = m.latlng;
-            if (geoDistance([-rotation[0], -rotation[1]], [lng, lat]) > Math.PI / 2) return null;
-            const xy = projection([lng, lat]);
-            if (!xy) return null;
-            return (
-              <g
-                key={m.cca2}
+                key={p.id}
+                d={p.d ?? undefined}
                 className="country-shape"
-                style={{ cursor: "pointer" }}
+                role={p.cca2 ? "button" : undefined}
+                aria-label={p.name}
+                aria-pressed={p.cca2 ? selected === p.cca2 : undefined}
+                tabIndex={p.cca2 ? 0 : undefined}
+                onKeyDown={(event) => {
+                  if (p.cca2 && (event.key === "Enter" || event.key === " ")) {
+                    event.preventDefault();
+                    onSelect(p.cca2);
+                  }
+                }}
+                fill={statusFill(p.cca2)}
+                stroke="var(--map-stroke)"
+                strokeWidth={0.4 / zoom}
                 onClick={() => {
                   const wasDrag = moved.current;
                   moved.current = false;
-                  if (!wasDrag) onSelect(m.cca2);
+                  if (!wasDrag && p.cca2) onSelect(p.cca2);
                 }}
               >
-                <circle cx={xy[0]} cy={xy[1]} r={9 / zoom} fill="transparent" />
-                <circle
-                  cx={xy[0]}
-                  cy={xy[1]}
-                  r={3.2 / zoom}
-                  fill={statusFill(m.cca2)}
-                  stroke={selected === m.cca2 ? "var(--foreground)" : "var(--map-stroke)"}
-                  strokeWidth={(selected === m.cca2 ? 1.4 : 0.7) / zoom}
-                />
-                <title>{m.name}</title>
-              </g>
-            );
-          })}
-          {mode === "places" && (
-            <g
-              aria-hidden={zoom < PIN_ZOOM}
-              style={{
-                opacity: zoom >= PIN_ZOOM ? 1 : 0,
-                transition: "opacity 200ms ease",
-                pointerEvents: "none",
-              }}
-            >
-              {pins.map((pl) => {
-                if (pl.kind === "region") return null;
-                if (pl.lat == null || pl.lng == null) return null;
-                if (geoDistance([-rotation[0], -rotation[1]], [pl.lng, pl.lat]) > Math.PI / 2)
-                  return null;
-                const xy = projection([pl.lng, pl.lat]);
-                if (!xy) return null;
-                const color =
-                  pl.status === "visited"
-                    ? "var(--map-visited)"
-                    : pl.status === "wish"
+                <title>{p.name}</title>
+              </path>
+            ))}
+            {mode === "places" &&
+              globeAreas.map((area, i) => (
+                <path
+                  key={area.properties.name + i}
+                  d={path(area) ?? undefined}
+                  fill={
+                    area.properties.status === "wish"
                       ? "var(--map-wish)"
-                      : "var(--map-lived)";
-                // Markers and labels keep a constant on-screen size at any zoom
-                // (dimensions are divided by zoom) and use a contrasting
-                // outline/halo so they stay readable on a same-colored country.
-                const label = (r: number) => (
-                  <text
-                    x={xy[0]}
-                    y={xy[1] + (r + 8.6) / zoom}
-                    textAnchor="middle"
-                    fontSize={9 / zoom}
-                    fontWeight={500}
-                    fill="var(--foreground)"
-                    stroke="var(--card)"
-                    strokeWidth={2.4 / zoom}
-                    paintOrder="stroke"
-                  >
-                    {pl.name}
-                  </text>
-                );
-                if (pl.kind === "attraction") {
-                  const r = 3.6 / zoom;
+                      : area.properties.status === "lived"
+                        ? "var(--map-lived)"
+                        : "var(--map-visited)"
+                  }
+                  fillOpacity={0.3}
+                  stroke="var(--foreground)"
+                  strokeOpacity={0.6}
+                  strokeWidth={0.8 / zoom}
+                  pointerEvents="none"
+                >
+                  <title>{area.properties.name}</title>
+                </path>
+              ))}
+            {MICROSTATES.map((m) => {
+              const [lat, lng] = m.latlng;
+              if (geoDistance([-rotation[0], -rotation[1]], [lng, lat]) > Math.PI / 2) return null;
+              const xy = projection([lng, lat]);
+              if (!xy) return null;
+              return (
+                <g
+                  key={m.cca2}
+                  className="country-shape"
+                  style={{ cursor: "pointer" }}
+                  onClick={() => {
+                    const wasDrag = moved.current;
+                    moved.current = false;
+                    if (!wasDrag) onSelect(m.cca2);
+                  }}
+                >
+                  <circle cx={xy[0]} cy={xy[1]} r={9 / zoom} fill="transparent" />
+                  <circle
+                    cx={xy[0]}
+                    cy={xy[1]}
+                    r={3.2 / zoom}
+                    fill={statusFill(m.cca2)}
+                    stroke={selected === m.cca2 ? "var(--foreground)" : "var(--map-stroke)"}
+                    strokeWidth={(selected === m.cca2 ? 1.4 : 0.7) / zoom}
+                  />
+                  <title>{m.name}</title>
+                </g>
+              );
+            })}
+            {mode === "places" && (
+              <g
+                aria-hidden={zoom < PIN_ZOOM}
+                style={{
+                  opacity: zoom >= PIN_ZOOM ? 1 : 0,
+                  transition: "opacity 200ms ease",
+                  pointerEvents: "none",
+                }}
+              >
+                {visiblePins.map((pl) => {
+                  if (pl.kind === "region") return null;
+                  if (pl.lat == null || pl.lng == null) return null;
+                  if (geoDistance([-rotation[0], -rotation[1]], [pl.lng, pl.lat]) > Math.PI / 2)
+                    return null;
+                  const xy = projection([pl.lng, pl.lat]);
+                  if (!xy) return null;
+                  const color =
+                    pl.status === "visited"
+                      ? "var(--map-visited)"
+                      : pl.status === "wish"
+                        ? "var(--map-wish)"
+                        : "var(--map-lived)";
+                  // Markers and labels keep a constant on-screen size at any zoom
+                  // (dimensions are divided by zoom) and use a contrasting
+                  // outline/halo so they stay readable on a same-colored country.
+                  const label = (r: number) => (
+                    <text
+                      x={xy[0]}
+                      y={xy[1] + (r + 8.6) / zoom}
+                      textAnchor="middle"
+                      fontSize={9 / zoom}
+                      fontWeight={500}
+                      fill="var(--foreground)"
+                      stroke="var(--card)"
+                      strokeWidth={2.4 / zoom}
+                      paintOrder="stroke"
+                    >
+                      {pl.name}
+                    </text>
+                  );
+                  if (pl.kind === "attraction") {
+                    const r = 3.6 / zoom;
+                    return (
+                      <g key={pl.id}>
+                        <path
+                          d={`M ${xy[0]} ${xy[1] - r} L ${xy[0] + r} ${xy[1]} L ${xy[0]} ${xy[1] + r} L ${xy[0] - r} ${xy[1]} Z`}
+                          fill={color}
+                          stroke="var(--card)"
+                          strokeWidth={1.2 / zoom}
+                        />
+                        {label(3.6)}
+                        <title>{pl.name}</title>
+                      </g>
+                    );
+                  }
+
                   return (
                     <g key={pl.id}>
-                      <path
-                        d={`M ${xy[0]} ${xy[1] - r} L ${xy[0] + r} ${xy[1]} L ${xy[0]} ${xy[1] + r} L ${xy[0] - r} ${xy[1]} Z`}
+                      <circle
+                        cx={xy[0]}
+                        cy={xy[1]}
+                        r={2.4 / zoom}
                         fill={color}
                         stroke="var(--card)"
-                        strokeWidth={1.2 / zoom}
+                        strokeWidth={1.3 / zoom}
                       />
-                      {label(3.6)}
+                      {label(2.4)}
                       <title>{pl.name}</title>
                     </g>
                   );
-                }
-
-                return (
-                  <g key={pl.id}>
-                    <circle
-                      cx={xy[0]}
-                      cy={xy[1]}
-                      r={2.4 / zoom}
-                      fill={color}
-                      stroke="var(--card)"
-                      strokeWidth={1.3 / zoom}
-                    />
-                    {label(2.4)}
-                    <title>{pl.name}</title>
-                  </g>
-                );
-              })}
-            </g>
-          )}
-          {selectedOutline && (
-            <g
-              data-selected-country={selected}
-              pointerEvents="none"
-              fill="none"
-              strokeLinejoin="round"
-              strokeLinecap="round"
-              aria-hidden="true"
-            >
-              <path
-                d={selectedOutline}
-                stroke="var(--background)"
-                strokeWidth={4}
-                vectorEffect="non-scaling-stroke"
+                })}
+              </g>
+            )}
+            {selectedOutline && (
+              <g
+                data-selected-country={selected}
+                pointerEvents="none"
+                fill="none"
+                strokeLinejoin="round"
+                strokeLinecap="round"
+                aria-hidden="true"
+              >
+                <path
+                  d={selectedOutline}
+                  stroke="var(--background)"
+                  strokeWidth={4}
+                  vectorEffect="non-scaling-stroke"
+                />
+                <path
+                  d={selectedOutline}
+                  stroke="var(--foreground)"
+                  strokeWidth={2}
+                  vectorEffect="non-scaling-stroke"
+                />
+              </g>
+            )}
+            {burst && (
+              <circle
+                className="scratch-burst"
+                cx={burst.x}
+                cy={burst.y}
+                r={26}
+                fill="none"
+                stroke="var(--map-visited)"
+                strokeWidth={6}
               />
-              <path
-                d={selectedOutline}
-                stroke="var(--foreground)"
-                strokeWidth={2}
-                vectorEffect="non-scaling-stroke"
-              />
-            </g>
-          )}
-          {burst && (
-            <circle
-              className="scratch-burst"
-              cx={burst.x}
-              cy={burst.y}
-              r={26}
-              fill="none"
-              stroke="var(--map-visited)"
-              strokeWidth={6}
-            />
-          )}
-        </g>
-      </svg>
+            )}
+          </g>
+        </svg>
+      </div>
     </div>
   );
 }

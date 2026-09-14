@@ -1,8 +1,10 @@
 import { useI18n } from "@/lib/i18n";
 import { transitionScreen } from "@/lib/screen-transition";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useRef } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { BookOpen, Flag, LifeBuoy, Settings, Map as MapIcon, Trophy } from "lucide-react";
+import { NotificationsPopover } from "@/components/NotificationsPopover";
+import { useUpdates } from "@/components/NotificationsPanel";
 import { useStore } from "@/lib/store";
 import { WorldMap, type MapMode } from "@/components/WorldMap";
 import { CountrySheet } from "@/components/CountrySheet";
@@ -55,11 +57,25 @@ const TABS: { id: Tab; label: string; icon: typeof MapIcon }[] = [
 function App() {
   const { tr } = useI18n();
 
-  const { state, ready, user, isGuest, isPreview } = useStore();
+  const { state, ready, user, isGuest, isPreview, signOut } = useStore();
+  const updates = useUpdates(!isPreview);
   const [entered, setEntered] = useState(false);
+  const enteredRef = useRef(entered);
+  enteredRef.current = entered;
+  const [authActive, setAuthActive] = useState(false);
+  useEffect(() => {
+    if (entered && !user && !isGuest && !isPreview) setAuthActive(true);
+  }, [entered, user, isGuest, isPreview]);
   useEffect(() => {
     setEntered(window.location.hash === "#app");
-    const sync = () => transitionScreen(() => setEntered(window.location.hash === "#app"));
+    const sync = () => {
+      const next = window.location.hash === "#app";
+      if (next === enteredRef.current) return;
+      transitionScreen(() => {
+        setAuthActive(false);
+        setEntered(next);
+      });
+    };
     window.addEventListener("hashchange", sync);
     return () => window.removeEventListener("hashchange", sync);
   }, []);
@@ -72,14 +88,34 @@ function App() {
     [state.places],
   );
 
-  if (!isPreview && !entered) return <LandingPage signedIn={!!user || isGuest} />;
-  if (!user && !isGuest && !isPreview)
+  if (!isPreview && !entered)
+    return (
+      <LandingPage
+        signedIn={!!user && !isGuest}
+        onProfile={() => {
+          if (user && !isGuest) {
+            setTab("settings");
+            window.location.hash = "app";
+          } else if (isGuest) {
+            void signOut().then(() => {
+              window.location.hash = "app";
+            });
+          } else window.location.hash = "app";
+        }}
+      />
+    );
+  if ((authActive || (!user && !isGuest)) && !isPreview)
     return (
       <>
         <a href="#" className="auth-home">
           ← {tr("Go home")}
         </a>
-        <AuthScreen />
+        <AuthScreen
+          onSuccess={() => {
+            setEntered(false);
+            window.location.hash = "";
+          }}
+        />
       </>
     );
 
@@ -99,17 +135,26 @@ function App() {
         <>
           <main className={`fixed inset-0 bottom-[58px] ${isPreview ? "top-12" : ""}`}>
             {ready && (
-              <WorldMap onSelect={setSelected} selected={selected} pins={pins} mode={mapMode} />
+              <WorldMap
+                onSelect={setSelected}
+                selected={selected}
+                pins={pins}
+                mode={mapMode}
+                preservePose={!isPreview}
+              />
             )}
           </main>
           {!isPreview && (
-            <a
-              href="#"
-              className="fixed right-4 top-4 z-10 rounded-full border border-border bg-background/85 px-4 py-2 text-sm font-semibold tracking-tight shadow-sm backdrop-blur"
-              aria-label={tr("Go home")}
-            >
-              Scratchlas ↗
-            </a>
+            <div className="map-header-actions">
+              <NotificationsPopover updates={updates} />
+              <a
+                href="#"
+                className="rounded-full border border-border bg-background/85 px-4 py-2 text-sm font-semibold tracking-tight shadow-sm backdrop-blur"
+                aria-label={tr("Go home")}
+              >
+                Scratchlas ↗
+              </a>
+            </div>
           )}
         </>
       ) : (
@@ -118,13 +163,16 @@ function App() {
             className={`sticky ${isPreview ? "top-12" : "top-0"} z-20 border-b border-border bg-background/85 backdrop-blur`}
           >
             <div className="mx-auto flex max-w-3xl items-center justify-between px-4 py-3">
-              <div>
-                <a href="#" className="text-xl font-semibold tracking-tight leading-none">
-                  Scratchlas
-                </a>
-                <p className="text-[11px] text-muted-foreground">
-                  {tr("Your world, one scratch at a time")}
-                </p>
+              <div className="flex items-center gap-3">
+                {!isPreview && <NotificationsPopover updates={updates} />}
+                <div>
+                  <a href="#" className="text-xl font-semibold tracking-tight leading-none">
+                    Scratchlas
+                  </a>
+                  <p className="text-[11px] text-muted-foreground">
+                    {tr("Your world, one scratch at a time")}
+                  </p>
+                </div>
               </div>
             </div>
           </header>
@@ -164,8 +212,10 @@ function App() {
                 tab === t.id ? "text-foreground" : "text-muted-foreground"
               }`}
             >
-              <t.icon className="size-5" strokeWidth={tab === t.id ? 2.2 : 1.6} />
-              {tr(t.label)}
+              <span className="relative">
+                <t.icon className="size-5" strokeWidth={tab === t.id ? 2.2 : 1.6} />
+              </span>
+              <span className="nav-label">{tr(t.label)}</span>
             </button>
           ))}
         </div>

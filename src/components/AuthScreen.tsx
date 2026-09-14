@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useStore } from "@/lib/store";
 
-export function AuthScreen() {
+export function AuthScreen({ onSuccess }: { onSuccess: () => void }) {
   const { tr } = useI18n();
 
   const { continueAsGuest } = useStore();
@@ -27,9 +27,11 @@ export function AuthScreen() {
     if (mode === "signin") {
       const { error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) setError(error.message);
+      else onSuccess();
     } else {
-      const { error } = await supabase.auth.signUp({ email, password });
+      const { data, error } = await supabase.auth.signUp({ email, password });
       if (error) setError(error.message);
+      else if (data.session) onSuccess();
       else setNotice("Account created — check your inbox to confirm your email, then sign in.");
     }
     setBusy(false);
@@ -47,7 +49,16 @@ export function AuthScreen() {
 
   return (
     <div className="auth-screen flex min-h-screen items-center justify-center bg-background px-4">
-      <button type="button" className="auth-skip" onClick={() => transitionScreen(continueAsGuest)}>
+      <button
+        type="button"
+        className="auth-skip"
+        onClick={() =>
+          transitionScreen(() => {
+            continueAsGuest();
+            onSuccess();
+          })
+        }
+      >
         {tr("Skip")}
       </button>
       <div className="w-full max-w-sm">

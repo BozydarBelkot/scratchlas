@@ -4,9 +4,11 @@ import type { Place } from "./store";
 
 export type RegionAreas = FeatureCollection<Geometry, { name: string; status?: string }>;
 const cache = new Map<string, Promise<RegionAreas>>();
+const EMPTY: RegionAreas = { type: "FeatureCollection", features: [] };
 export function useRegionAreas(places: Place[]) {
   const [areas, setAreas] = useState<RegionAreas>({ type: "FeatureCollection", features: [] });
   const [missing, setMissing] = useState(false);
+  const [source, setSource] = useState<Place[] | null>(null);
   useEffect(() => {
     let cancelled = false;
     const regions = places.filter((p) => p.kind === "region");
@@ -41,10 +43,11 @@ export function useRegionAreas(places: Place[]) {
       });
       setAreas({ type: "FeatureCollection", features });
       setMissing(features.length < regions.length);
+      setSource(places);
     });
     return () => {
       cancelled = true;
     };
   }, [places]);
-  return { areas, missing };
+  return { areas: source === places ? areas : EMPTY, missing: source === places && missing };
 }

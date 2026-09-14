@@ -8,16 +8,26 @@ import {
   ChartNoAxesCombined,
   Pause,
   Play,
+  UserRound,
+  Instagram,
 } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 import { WorldMap } from "./WorldMap";
+import { useStore } from "@/lib/store";
 function PreviewGlobe() {
   const [paused, setPaused] = useState(false);
   const { tr } = useI18n();
   return (
     <div className="landing-globe">
       <div className="landing-map" inert>
-        <WorldMap onSelect={() => {}} pins={[]} mode="world" decorative autoRotate={!paused} />
+        <WorldMap
+          onSelect={() => {}}
+          pins={[]}
+          mode="world"
+          decorative
+          autoRotate={!paused}
+          preservePose
+        />
       </div>
 
       <button
@@ -31,8 +41,13 @@ function PreviewGlobe() {
   );
 }
 
-export function LandingPage({ signedIn }: { signedIn: boolean }) {
+export function LandingPage({ signedIn, onProfile }: { signedIn: boolean; onProfile: () => void }) {
   const { tr } = useI18n();
+  const { user } = useStore();
+  const [failedPhoto, setFailedPhoto] = useState<string | null>(null);
+  const rawPhoto = user?.user_metadata?.avatar_url ?? user?.user_metadata?.picture;
+  const photo =
+    signedIn && typeof rawPhoto === "string" && /^https?:\/\//i.test(rawPhoto) ? rawPhoto : null;
   const features = [
     {
       icon: Globe2,
@@ -60,10 +75,24 @@ export function LandingPage({ signedIn }: { signedIn: boolean }) {
           <Globe2 size={25} />
           Scratchlas<span className="brand-dot">●</span>
         </a>
-        <a href="#app" className="landing-login">
-          {tr(signedIn ? "Open app" : "Sign in")}
-          <ArrowUpRight size={17} />
-        </a>
+        <button
+          type="button"
+          onClick={onProfile}
+          className="profile-avatar"
+          aria-label={tr(signedIn ? "Account" : "Sign in")}
+          title={tr(signedIn ? "Account" : "Sign in")}
+        >
+          {photo && failedPhoto !== photo ? (
+            <img
+              src={photo}
+              alt=""
+              referrerPolicy="no-referrer"
+              onError={() => setFailedPhoto(photo)}
+            />
+          ) : (
+            <UserRound size={21} strokeWidth={1.6} />
+          )}
+        </button>
       </header>
       <main>
         <section className="landing-hero">
@@ -114,6 +143,16 @@ export function LandingPage({ signedIn }: { signedIn: boolean }) {
       </main>
       <footer className="landing-footer">
         <span>Scratchlas</span>
+        <a
+          className="instagram-link"
+          href="https://www.instagram.com/scratchlas.app/"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <Instagram size={18} aria-hidden="true" />
+          <span>@scratchlas.app</span>
+          <ArrowUpRight size={14} aria-hidden="true" />
+        </a>
         <span>{tr("A little curiosity. A whole world.")}</span>
       </footer>
     </div>

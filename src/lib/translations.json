@@ -1699,5 +1699,68 @@
     "de": "Überspringen",
     "es": "Omitir",
     "fr": "Passer"
+  },
+  "Notifications": {
+    "en": "Notifications",
+    "pl": "Powiadomienia",
+    "de": "Benachrichtigungen",
+    "es": "Notificaciones",
+    "fr": "Notifications"
+  },
+  "News and improvements from Scratchlas.": {
+    "en": "News and improvements from Scratchlas.",
+    "pl": "Nowości i ulepszenia w Scratchlas.",
+    "de": "Neuigkeiten und Verbesserungen von Scratchlas.",
+    "es": "Novedades y mejoras de Scratchlas.",
+    "fr": "Nouveautés et améliorations de Scratchlas."
+  },
+  "Refresh": {
+    "en": "Refresh",
+    "pl": "Odśwież",
+    "de": "Aktualisieren",
+    "es": "Actualizar",
+    "fr": "Actualiser"
+  },
+  "Mark all as read": {
+    "en": "Mark all as read",
+    "pl": "Oznacz wszystkie jako przeczytane",
+    "de": "Alle als gelesen markieren",
+    "es": "Marcar todo como leído",
+    "fr": "Tout marquer comme lu"
+  },
+  "Updates could not be loaded. Please try again.": {
+    "en": "Updates could not be loaded. Please try again.",
+    "pl": "Nie udało się wczytać aktualizacji. Spróbuj ponownie.",
+    "de": "Updates konnten nicht geladen werden. Bitte erneut versuchen.",
+    "es": "No se pudieron cargar las novedades. Inténtalo de nuevo.",
+    "fr": "Impossible de charger les nouveautés. Réessayez."
+  },
+  "You are all caught up.": {
+    "en": "You are all caught up.",
+    "pl": "Jesteś na bieżąco.",
+    "de": "Du bist auf dem neuesten Stand.",
+    "es": "Estás al día.",
+    "fr": "Vous êtes à jour."
+  },
+  "New": {
+    "en": "New",
+    "pl": "Nowe",
+    "de": "Neu",
+    "es": "Nuevo",
+    "fr": "Nouveau"
+  },
+  "A new home for your travels": {
+    "en": "A new home for your travels",
+    "pl": "Nowy dom dla Twoich podróży",
+    "de": "Ein neues Zuhause für deine Reisen",
+    "es": "Un nuevo hogar para tus viajes",
+    "fr": "Un nouvel espace pour vos voyages"
+  },
+  "Discover the refreshed Scratchlas homepage, a more consistent interface and a smoother journey into your globe. Future improvements will appear here.": {
+    "en": "Discover the refreshed Scratchlas homepage, a more consistent interface and a smoother journey into your globe. Future improvements will appear here.",
+    "pl": "Poznaj odświeżoną stronę główną Scratchlas, spójniejszy interfejs i płynne przejście do globusa. Tutaj znajdziesz informacje o kolejnych ulepszeniach.",
+    "de": "Entdecke die neue Scratchlas-Startseite, eine einheitlichere Oberfläche und einen fließenden Übergang zum Globus. Weitere Verbesserungen erscheinen hier.",
+    "es": "Descubre la nueva página de Scratchlas, una interfaz más coherente y una transición fluida al globo. Las próximas mejoras aparecerán aquí.",
+    "fr": "Découvrez la nouvelle page Scratchlas, une interface plus cohérente et une transition fluide vers le globe. Les prochaines améliorations apparaîtront ici."
   }
 }
