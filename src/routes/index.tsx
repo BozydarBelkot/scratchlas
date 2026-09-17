@@ -131,7 +131,7 @@ function App() {
       )}
       {isMap ? (
         <>
-          <main className={`fixed inset-0 bottom-[58px] ${isPreview ? "top-12" : ""}`}>
+          <main className={`fixed inset-0 ${isPreview ? "top-12" : ""}`}>
             {ready && (
               <WorldMap
                 onSelect={setSelected}
