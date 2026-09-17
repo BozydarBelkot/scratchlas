@@ -1,8 +1,8 @@
 [
   {
-    "id": "2026-09-14-update-1",
-    "date": "2026-09-14",
-    "title": "Te damos la bienvenida a Scratchlas",
-    "body": "¡Una aplicación moderna, gratuita y actualizada casi a diario! Novedades: animación al entrar en la aplicación, notificaciones y enlace al perfil de Instagram en el pie de página."
+    "id": "2026-09-17-navigation-and-globe",
+    "date": "2026-09-17",
+    "title": "Scratchlas a tu manera",
+    "body": "Personaliza la barra inferior en Ajustes: cambia el orden de las pestañas, ocúltalas y recupéralas cuando quieras. La barra y el panel del país ahora tienen fondos translúcidos y desenfocados, con transiciones más fluidas entre pestañas. Selecciona un país para ver al instante sus ciudades, atracciones y regiones, y contrae el panel para dejar más espacio al globo. Hemos mejorado los contornos de los países y los límites compartidos entre regiones. Los nombres de los lugares aparecen al pasar el cursor o tocar un punto; los lugares cercanos se agrupan en un punto más grande. Las notificaciones ahora utilizan el idioma de la interfaz."
   }
 ]

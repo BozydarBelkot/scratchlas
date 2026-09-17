@@ -1,8 +1,8 @@
 [
   {
-    "id": "2026-09-14-update-1",
-    "date": "2026-09-14",
-    "title": "Witaj w Scratchlas",
-    "body": "Nowoczesna, darmowa aplikacja rozwijana niemal codziennie! Ostatnie zmiany: animacja wejścia do aplikacji, powiadomienia oraz profil na Instagramie dostępny w stopce."
+    "id": "2026-09-17-navigation-and-globe",
+    "date": "2026-09-17",
+    "title": "Scratchlas po Twojemu",
+    "body": "Dostosuj dolny pasek w Ustawieniach: zmieniaj kolejność zakładek, ukrywaj je i przywracaj w dowolnym momencie. Pasek i panel kraju mają teraz półprzezroczyste, rozmyte tło oraz płynniejsze przejścia między zakładkami. Wybierz kraj, aby od razu zobaczyć jego miasta, atrakcje i regiony, a następnie zwiń panel, by odsłonić więcej globusa. Poprawiliśmy obrysy państw i wspólne granice regionów. Nazwy miejsc pojawiają się po najechaniu lub dotknięciu, a pobliskie miejsca są grupowane pod większą kropką. Powiadomienia wyświetlają się teraz w języku interfejsu."
   }
 ]

@@ -1,8 +1,8 @@
 [
   {
-    "id": "2026-09-14-update-1",
-    "date": "2026-09-14",
-    "title": "Welcome to Scratchlas",
-    "body": "Responsible, modern, free, updated almost everyday! Last changes: Added animation when entering app, added notification tab, instagram profile linked in footer."
+    "id": "2026-09-17-navigation-and-globe",
+    "date": "2026-09-17",
+    "title": "Your Scratchlas, your way",
+    "body": "Customize the bottom bar in Settings: reorder tabs, hide them and restore them whenever you want. The bar and country panel now have translucent, blurred backgrounds, with smoother tab transitions. Select a country to see its cities, attractions and regions immediately, and collapse the panel to reveal more of the globe. Country outlines and shared region borders have been improved. Place names appear on hover or tap, while nearby places share a larger dot. Notifications now follow your interface language."
   }
 ]
