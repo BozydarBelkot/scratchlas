@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useRef } from "react";
 import { Bell, CheckCheck, RefreshCw } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 import { Button } from "./ui/button";
@@ -14,39 +14,47 @@ function readIds(): string[] {
   }
 }
 export function useUpdates(enabled = true) {
+  const { language } = useI18n();
+  const [loadedLanguage, setLoadedLanguage] = useState<string | null>(null);
   const [items, setItems] = useState<Notice[]>([]);
   const [read, setRead] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
-  const refresh = useCallback(async (signal?: AbortSignal) => {
-    setLoading(true);
-    try {
-      const response = await fetch("/updates.json", { cache: "no-store", signal });
-      if (!response.ok) throw Error("Unavailable");
-      const value: unknown = await response.json();
-      if (
-        !Array.isArray(value) ||
-        value.length > 200 ||
-        !value.every(
-          (n) =>
-            n &&
-            typeof n.id === "string" &&
-            typeof n.title === "string" &&
-            typeof n.body === "string" &&
-            typeof n.date === "string" &&
-            !Number.isNaN(Date.parse(n.date)),
+  const requestId = useRef(0);
+  const refresh = useCallback(
+    async (signal?: AbortSignal) => {
+      const current = ++requestId.current;
+      setLoading(true);
+      try {
+        const response = await fetch(`/updates/${language}.json`, { cache: "no-store", signal });
+        if (!response.ok) throw Error("Unavailable");
+        const value: unknown = await response.json();
+        if (
+          !Array.isArray(value) ||
+          value.length > 200 ||
+          !value.every(
+            (n) =>
+              n &&
+              typeof n.id === "string" &&
+              typeof n.title === "string" &&
+              typeof n.body === "string" &&
+              typeof n.date === "string" &&
+              !Number.isNaN(Date.parse(n.date)),
+          )
         )
-      )
-        throw Error("Invalid feed");
-      if (signal?.aborted) return;
-      setItems(value.sort((a, b) => b.date.localeCompare(a.date)));
-      setError(false);
-    } catch {
-      if (!signal?.aborted) setError(true);
-    } finally {
-      if (!signal?.aborted) setLoading(false);
-    }
-  }, []);
+          throw Error("Invalid feed");
+        if (signal?.aborted || current !== requestId.current) return;
+        setLoadedLanguage(language);
+        setItems(value.sort((a, b) => b.date.localeCompare(a.date)));
+        setError(false);
+      } catch {
+        if (!signal?.aborted && current === requestId.current) setError(true);
+      } finally {
+        if (!signal?.aborted && current === requestId.current) setLoading(false);
+      }
+    },
+    [language],
+  );
   useEffect(() => {
     if (!enabled) return;
     setRead(readIds());
@@ -81,13 +89,13 @@ export function useUpdates(enabled = true) {
     }
   }
   return {
-    items,
+    items: loadedLanguage === language ? items : [],
     read,
     loading,
     error,
     refresh,
     markRead,
-    unread: items.filter((n) => !read.includes(n.id)).length,
+    unread: loadedLanguage === language ? items.filter((n) => !read.includes(n.id)).length : 0,
   };
 }
 export function NotificationsPanel({ updates }: { updates: ReturnType<typeof useUpdates> }) {
@@ -132,9 +140,9 @@ export function NotificationsPanel({ updates }: { updates: ReturnType<typeof use
               </span>
             )}
           </div>
-          <h3 className="text-xl">{tr(n.title)}</h3>
+          <h3 className="text-xl">{n.title}</h3>
           <p className="whitespace-pre-line text-sm leading-relaxed text-muted-foreground">
-            {tr(n.body)}
+            {n.body}
           </p>
         </article>
       ))}

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import type { FeatureCollection, Geometry } from "geojson";
 import type { Place } from "./store";
+import { fitRegionsToGlobe } from "./region-display";
 
 export type RegionAreas = FeatureCollection<Geometry, { name: string; status?: string }>;
 const cache = new Map<string, Promise<RegionAreas>>();
@@ -22,6 +23,7 @@ export function useRegionAreas(places: Place[]) {
                 if (!r.ok) throw new Error("Region boundaries unavailable");
                 return r.json();
               })
+              .then((data: RegionAreas) => fitRegionsToGlobe(data, code))
               .catch((error) => {
                 cache.delete(code);
                 throw error;

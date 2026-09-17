@@ -1,13 +1,12 @@
 import { useI18n } from "@/lib/i18n";
 import { CountryFlag } from "@/components/CountryFlag";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Building2, Check, Globe, Landmark, MapPin, MapPinned, Search, X } from "lucide-react";
+import { Building2, Check, Landmark, MapPinned, Search, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { BY_CCA2 } from "@/lib/countries";
 import { loadCountryGeo, type CountryGeo, type GeoEntry } from "@/lib/geo-data";
 import { useStore, STATUS_LABEL, KIND_LABEL, type PlaceKind, type Status } from "@/lib/store";
-import type { MapMode } from "@/components/WorldMap";
 
 const STATUSES: Status[] = ["visited", "wish", "lived"];
 
@@ -22,17 +21,7 @@ const CATEGORIES: { id: SubKind; label: string; icon: typeof Building2 }[] = [
 const statusColor = (s: Status) =>
   s === "visited" ? "var(--map-visited)" : s === "wish" ? "var(--map-wish)" : "var(--map-lived)";
 
-export function CountrySheet({
-  code,
-  mode,
-  onModeChange,
-  onClose,
-}: {
-  code: string | null;
-  mode: MapMode;
-  onModeChange: (mode: MapMode) => void;
-  onClose: () => void;
-}) {
+export function CountrySheet({ code, onClose }: { code: string | null; onClose: () => void }) {
   const { tr, language } = useI18n();
 
   const { state, statusByCountry, setCountryStatus, addPlace, removePlace, isPreview } = useStore();
@@ -43,11 +32,21 @@ export function CountrySheet({
   const [lastCode, setLastCode] = useState(code);
   const [expanded, setExpanded] = useState(false);
   const scrollPanel = useRef<HTMLDivElement>(null);
+  const touchStart = useRef<number | null>(null);
+  const atTop = (target: EventTarget) => {
+    let element = target as HTMLElement;
+    while (element && scrollPanel.current?.contains(element)) {
+      if (element.scrollTop > 1) return false;
+      if (element === scrollPanel.current) break;
+      element = element.parentElement!;
+    }
+    return true;
+  };
   useEffect(() => {
     if (!code) return;
     setExpanded(false);
     scrollPanel.current?.scrollTo({ top: 0 });
-  }, [code, mode]);
+  }, [code]);
 
   // Reset the picker whenever another country is opened.
   useEffect(() => {
@@ -117,46 +116,42 @@ export function CountrySheet({
         className="country-menu overflow-visible rounded-t-2xl p-0 sm:mx-auto sm:max-w-xl"
       >
         <div
-          role="group"
-          aria-label={tr("Map view")}
-          className="absolute right-0 bottom-full mb-3 grid grid-cols-2 gap-1 rounded-xl border border-border bg-background p-1 shadow-lg"
-        >
-          {(
-            [
-              { id: "world", label: "World", icon: Globe },
-              { id: "places", label: "Places", icon: MapPin },
-            ] as const
-          ).map((item) => (
-            <button
-              key={item.id}
-              type="button"
-              aria-pressed={mode === item.id}
-              onClick={() => onModeChange(item.id)}
-              className={`flex items-center justify-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${mode === item.id ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-accent"}`}
-            >
-              <item.icon className="size-4" />
-              {tr(item.label)}
-            </button>
-          ))}
-        </div>
-        <div
           ref={scrollPanel}
           data-expanded={expanded}
           className="country-menu-scroll max-h-[calc(100dvh-6rem)] overflow-y-auto overscroll-contain px-4 pt-6 pb-8"
-          onWheel={() => {
-            if (mode === "places") setExpanded(true);
+          onWheel={(event) => {
+            if (event.deltaY > 0) setExpanded(true);
+            else if (event.deltaY < 0 && atTop(event.target)) setExpanded(false);
           }}
-          onPointerDown={() => {
-            if (mode === "places") setExpanded(true);
+          onTouchStart={(event) => {
+            touchStart.current = event.touches[0].clientY;
           }}
-          onClick={() => {
-            if (mode === "places") setExpanded(true);
+          onTouchMove={(event) => {
+            const delta =
+              event.touches[0].clientY - (touchStart.current ?? event.touches[0].clientY);
+            if (delta < -20) setExpanded(true);
+            if (delta > 30 && atTop(event.target)) {
+              setExpanded(false);
+              touchStart.current = null;
+            }
           }}
           onKeyDown={(event) => {
-            if (mode === "places" && ["ArrowDown", "PageDown", "Enter", " "].includes(event.key))
-              setExpanded(true);
+            if (["ArrowDown", "PageDown"].includes(event.key)) setExpanded(true);
+            if (event.key === "ArrowUp" && atTop(event.target)) setExpanded(false);
           }}
         >
+          <button
+            type="button"
+            aria-label={tr(expanded ? "Collapse" : "Expand")}
+            aria-expanded={expanded}
+            onClick={() => {
+              setExpanded(!expanded);
+              scrollPanel.current?.scrollTo({ top: 0 });
+            }}
+            className="mx-auto mb-3 flex h-4 w-16 items-center justify-center"
+          >
+            <span className="h-1 w-10 rounded-full bg-muted-foreground/40" />
+          </button>
           <SheetHeader className="px-0 pr-6">
             <SheetTitle className="flex items-center gap-2 text-2xl font-display">
               <CountryFlag code={c.cca2} /> {c.name}
@@ -185,12 +180,7 @@ export function CountrySheet({
             ))}
           </div>
 
-          <div
-            className="country-places"
-            data-expanded={mode === "places"}
-            aria-hidden={mode !== "places"}
-            inert={mode !== "places"}
-          >
+          <div className="country-places" data-expanded={true}>
             <div className="min-h-0 overflow-hidden">
               <div className="mt-4 space-y-3">
                 <span className="label-caps">{tr("Places in {0}", { 0: c.name })}</span>

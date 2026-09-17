@@ -1181,3 +1181,37 @@
   outline: 2px solid var(--ring);
   outline-offset: 3px;
 }
+[data-place-markers] [role="button"]:focus {
+  outline: none;
+}
+[data-place-markers] [role="button"]:focus-visible > circle:last-child {
+  stroke: var(--foreground);
+  stroke-width: 2;
+}
+.country-detail-layer {
+  transition: opacity 280ms ease-out;
+}
+@media (prefers-reduced-motion: reduce) {
+  .country-detail-layer {
+    transition: none;
+  }
+}
+/* Shared real/miniature navigation geometry: one inset on every edge. */
+.app-navigation, .country-menu, .navigation-mini {
+  background: color-mix(in srgb, var(--background) 78%, transparent);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+.app-navigation { padding: 6px; padding-bottom: calc(6px + env(safe-area-inset-bottom)); }
+.navigation-mini { border: 1px solid var(--border); border-radius: 20px; padding: 6px; }
+.navigation-strip { position: relative; display: grid; grid-template-columns: repeat(var(--tabs), minmax(0,1fr)); width: 100%; isolation: isolate; }
+.navigation-highlight { position:absolute; inset:0 auto 0 0; width:calc(100% / var(--tabs)); background:var(--primary); border-radius:18px; transform:translateX(calc(var(--active) * 100%)); transition:transform 320ms cubic-bezier(.22,1,.36,1),width 320ms ease,opacity 160ms; pointer-events:none; z-index:-1; }
+.app-navigation .navigation-strip button, .navigation-strip button { margin:0; border-radius:18px; padding:10px 3px; min-width:0; min-height:54px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; font-size:11px; background:transparent; color:var(--muted-foreground); transition:color 180ms; }
+.app-navigation .navigation-strip button[aria-current="page"], .navigation-strip button[aria-current="page"] { background:transparent; color:var(--primary-foreground); }
+.navigation-strip button:focus-visible { outline:2px solid var(--ring); outline-offset:-2px; }
+.navigation-mini .navigation-strip button { font-size:9px; min-height:46px; padding:7px 2px; }
+.navigation-mini .navigation-strip svg { width:17px; height:17px; }
+.navigation-edit-actions button { display:flex; align-items:center; gap:6px; border:1px solid var(--border); border-radius:12px; padding:8px 10px; font-size:12px; }
+.navigation-edit-actions button:disabled { opacity:.35; cursor:not-allowed; }
+@media(prefers-reduced-motion:reduce) { .navigation-highlight { transition:none; } }
+.navigation-mini { max-width: 520px; margin-inline: auto; }

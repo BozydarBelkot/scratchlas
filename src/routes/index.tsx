@@ -2,7 +2,8 @@ import { useI18n } from "@/lib/i18n";
 import { transitionScreen } from "@/lib/screen-transition";
 import { useEffect, useMemo, useState, useRef } from "react";
 import { createFileRoute } from "@tanstack/react-router";
-import { BookOpen, Flag, LifeBuoy, Settings, Map as MapIcon, Trophy } from "lucide-react";
+import { useNavigationLayout, type Tab } from "@/lib/navigation";
+import { NavigationStrip } from "@/components/NavigationSettings";
 import { NotificationsPopover } from "@/components/NotificationsPopover";
 import { useUpdates } from "@/components/NotificationsPanel";
 import { useStore } from "@/lib/store";
@@ -43,21 +44,11 @@ export const Route = createFileRoute("/")({
   ),
 });
 
-type Tab = "map" | "countries" | "journal" | "stats" | "guide" | "settings";
-
-const TABS: { id: Tab; label: string; icon: typeof MapIcon }[] = [
-  { id: "map", label: "Map", icon: MapIcon },
-  { id: "countries", label: "Countries", icon: Flag },
-  { id: "journal", label: "Journal", icon: BookOpen },
-  { id: "stats", label: "Stats", icon: Trophy },
-  { id: "guide", label: "Guide", icon: LifeBuoy },
-  { id: "settings", label: "Settings", icon: Settings },
-];
-
 function App() {
   const { tr } = useI18n();
 
   const { state, ready, user, isGuest, isPreview, signOut } = useStore();
+  const navigation = useNavigationLayout();
   const updates = useUpdates(!isPreview);
   const [entered, setEntered] = useState(false);
   const enteredRef = useRef(entered);
@@ -80,8 +71,15 @@ function App() {
     return () => window.removeEventListener("hashchange", sync);
   }, []);
   const [tab, setTab] = useState<Tab>("map");
+  useEffect(() => {
+    if (!isPreview && navigation.layout.hidden.includes(tab)) {
+      setTab(
+        navigation.layout.order.find((id) => !navigation.layout.hidden.includes(id)) ?? "settings",
+      );
+    }
+  }, [navigation.layout, tab, isPreview]);
   const [selected, setSelected] = useState<string | null>(null);
-  const [mapMode, setMapMode] = useState<MapMode>("world");
+  const mapMode: MapMode = selected ? "places" : "world";
 
   const pins = useMemo(
     () => state.places.filter((p) => p.kind !== "country" && p.lat != null),
@@ -182,43 +180,32 @@ function App() {
             {tab === "journal" && <JournalPanel />}
             {tab === "stats" && <StatsPanel />}
             {tab === "guide" && <GuidePanel />}
-            {tab === "settings" && !isPreview && <SettingsPanel />}
+            {tab === "settings" && !isPreview && <SettingsPanel navigation={navigation} />}
           </main>
         </>
       )}
 
       <CountrySheet
         code={selected}
-        mode={mapMode}
-        onModeChange={setMapMode}
-        onClose={() => setSelected(null)}
+        onClose={() => {
+          setSelected(null);
+        }}
       />
 
       <nav
         aria-label={tr("Main navigation")}
         className="app-navigation fixed inset-x-0 bottom-0 z-20 border-t border-border bg-background/95 backdrop-blur"
       >
-        <div className="mx-auto flex max-w-3xl">
-          {TABS.filter((t) => !isPreview || t.id !== "settings").map((t) => (
-            <button
-              key={t.id}
-              type="button"
-              onClick={() => {
-                setSelected(null);
-                setTab(t.id);
-              }}
-              aria-current={tab === t.id ? "page" : undefined}
-              className={`flex flex-1 flex-col items-center gap-1 py-2.5 text-[11px] transition-colors ${
-                tab === t.id ? "text-foreground" : "text-muted-foreground"
-              }`}
-            >
-              <span className="relative">
-                <t.icon className="size-5" strokeWidth={tab === t.id ? 2.2 : 1.6} />
-              </span>
-              <span className="nav-label">{tr(t.label)}</span>
-            </button>
-          ))}
-        </div>
+        <NavigationStrip
+          ids={navigation.layout.order.filter((id) =>
+            isPreview ? id !== "settings" : !navigation.layout.hidden.includes(id),
+          )}
+          active={tab}
+          onSelect={(id) => {
+            setSelected(null);
+            setTab(id);
+          }}
+        />
       </nav>
     </div>
   );

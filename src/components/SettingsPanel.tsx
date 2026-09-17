@@ -1,3 +1,5 @@
+import { NavigationSettings } from "./NavigationSettings";
+import type { NavigationLayout } from "@/lib/navigation";
 import { useI18n, LANGUAGES, isLanguage } from "@/lib/i18n";
 import { DangerZone } from "./DangerZone";
 import { AccountSecurity } from "./AccountSecurity";
@@ -14,7 +16,11 @@ const THEMES: { id: MapTheme; label: string }[] = [
   { id: "mono", label: "Mono" },
 ];
 
-export function SettingsPanel() {
+export function SettingsPanel({
+  navigation,
+}: {
+  navigation: { layout: NavigationLayout; update: (v: NavigationLayout) => void };
+}) {
   const { tr, language, setLanguage } = useI18n();
 
   const { state, setMode, setMapTheme, user, isGuest, signOut, importBackup } = useStore();
@@ -100,6 +106,7 @@ export function SettingsPanel() {
           {tr("Customize appearance and manage your data.")}
         </p>
       </div>
+      <NavigationSettings layout={navigation.layout} onChange={navigation.update} />
       <section className="card-surface space-y-3 p-4 sm:p-5">
         <label htmlFor="interface-language" className="block font-display text-xl">
           {tr("Interface language")}

@@ -1,9 +1,9 @@
-# Publishing app announcements
+# Publishing localized announcements
 
-Edit `public/updates.json` to publish an announcement with the next deployment. Add a new object at the start of the array with a unique `id`, an ISO `date` (`YYYY-MM-DD`), a `title` and a `body`. Keep the newest 200 entries at most. Never reuse an ID for a new announcement: unread status is tracked by ID.
+Edit the matching file in `public/updates/`: `en.json`, `pl.json`, `de.json`, `es.json`, or `fr.json`. The app fetches only the language selected in interface settings and immediately switches feeds when that setting changes.
 
-The Notifications tab retrieves this public feed on opening, on window focus and once per minute while the page is visible. The Refresh button checks immediately. Read status stays in the current browser; announcements never modify travel data. No browser push permission is required. Text is rendered as plain text, not HTML.
+Each entry has `id`, `date` (YYYY-MM-DD), `title`, and `body`. Use the same ID for translations of the same announcement: read status is shared across languages. Use a new unique ID for each new release. Keep no more than 200 entries per language. An announcement with no translation in a language should be omitted from that language's file; it will not fall back to another language.
 
-To localize an announcement, use its title and body as keys in `src/lib/translations.json`. Without a translation, the original text is displayed.
+Publish the files with the app. The notifications popup checks on page load, on window focus, once per minute while visible, and when Refresh is pressed. Content is plain text. Travel data is never changed. Read status is local to the browser.
 
-For example, ask: “Add an update notification titled … with the text …”, then publish the updated application. Notifications reach visitors of the deployed version; local changes only reach devices using the local server.
+The old `public/updates.json` is retained solely for older deployed clients. New announcements should be added to the language files. You can ask the assistant to add a notification and its translations before publishing.

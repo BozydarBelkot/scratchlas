@@ -539,11 +539,11 @@
     "fr": "Rechercher des pays…"
   },
   "Collapse": {
-    "en": "Collapse",
     "pl": "Zwiń",
     "de": "Einklappen",
     "es": "Contraer",
-    "fr": "Réduire"
+    "fr": "Réduire",
+    "en": "Collapse"
   },
   "Choose places": {
     "en": "Choose places",
@@ -1762,5 +1762,61 @@
     "de": "Entdecke die neue Scratchlas-Startseite, eine einheitlichere Oberfläche und einen fließenden Übergang zum Globus. Weitere Verbesserungen erscheinen hier.",
     "es": "Descubre la nueva página de Scratchlas, una interfaz más coherente y una transición fluida al globo. Las próximas mejoras aparecerán aquí.",
     "fr": "Découvrez la nouvelle page Scratchlas, une interface plus cohérente et une transition fluide vers le globe. Les prochaines améliorations apparaîtront ici."
+  },
+  "Expand": {
+    "pl": "Rozwiń",
+    "de": "Erweitern",
+    "es": "Expandir",
+    "fr": "Développer",
+    "en": "Expand"
+  },
+  "Bottom navigation": {
+    "en": "Bottom navigation",
+    "pl": "Dolny pasek",
+    "de": "Untere Navigation",
+    "es": "Navegación inferior",
+    "fr": "Navigation inférieure"
+  },
+  "Select a tab below to move or hide it. Settings stays visible.": {
+    "en": "Select a tab below to move or hide it. Settings stays visible.",
+    "pl": "Wybierz zakładkę poniżej, aby ją przesunąć lub ukryć. Ustawienia pozostają widoczne.",
+    "de": "Wähle einen Tab zum Verschieben oder Ausblenden. Einstellungen bleibt sichtbar.",
+    "es": "Selecciona una pestaña para moverla u ocultarla. Ajustes permanece visible.",
+    "fr": "Sélectionnez un onglet pour le déplacer ou le masquer. Réglages reste visible."
+  },
+  "Move left": {
+    "en": "Move left",
+    "pl": "Przesuń w lewo",
+    "de": "Nach links",
+    "es": "Mover a la izquierda",
+    "fr": "Déplacer à gauche"
+  },
+  "Move right": {
+    "en": "Move right",
+    "pl": "Przesuń w prawo",
+    "de": "Nach rechts",
+    "es": "Mover a la derecha",
+    "fr": "Déplacer à droite"
+  },
+  "Hide tab": {
+    "en": "Hide tab",
+    "pl": "Ukryj zakładkę",
+    "de": "Tab ausblenden",
+    "es": "Ocultar pestaña",
+    "fr": "Masquer l’onglet"
+  },
+  "Hidden tabs": {
+    "en": "Hidden tabs",
+    "pl": "Ukryte zakładki",
+    "de": "Ausgeblendete Tabs",
+    "es": "Pestañas ocultas",
+    "fr": "Onglets masqués"
+  },
+  "No hidden tabs": {
+    "en": "No hidden tabs",
+    "pl": "Brak ukrytych zakładek",
+    "de": "Keine ausgeblendeten Tabs",
+    "es": "No hay pestañas ocultas",
+    "fr": "Aucun onglet masqué"
   }
 }
