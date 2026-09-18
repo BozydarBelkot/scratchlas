@@ -1,0 +1,253 @@
+{
+  "version": 1,
+  "sdk_version": "2.2.1",
+  "path": "/mcp",
+  "auth": {
+    "type": "oauth",
+    "issuer": "https://tzucllqdxylymlrcaerb.supabase.co/auth/v1",
+    "accepted_audiences": [
+      "authenticated"
+    ],
+    "jwks_uri": "https://tzucllqdxylymlrcaerb.supabase.co/auth/v1/.well-known/jwks.json"
+  },
+  "mcp": {
+    "server": {
+      "name": "scratchlas",
+      "version": "0.1.0",
+      "title": "Scratchlas"
+    },
+    "tools": [
+      {
+        "name": "list_marked_places",
+        "title": "List marked places",
+        "description": "List the signed-in traveler's marked countries, regions, cities and attractions, optionally filtered by status or kind.",
+        "annotations": {
+          "readOnlyHint": true
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "visited",
+                "wish",
+                "lived"
+              ],
+              "description": "visited, wish (wish list) or lived"
+            },
+            "kind": {
+              "type": "string",
+              "enum": [
+                "country",
+                "region",
+                "city",
+                "attraction"
+              ]
+            },
+            "limit": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 500
+            }
+          },
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "set_country_status",
+        "title": "Mark a country",
+        "description": "Mark a country on the traveler's scratch map as visited, wish list or lived, or clear its mark. Re-running with the same values is safe.",
+        "annotations": {
+          "idempotentHint": true
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "country": {
+              "type": "string",
+              "minLength": 2,
+              "description": "Country name or ISO code, e.g. 'Japan' or 'JP'"
+            },
+            "status": {
+              "type": "string",
+              "enum": [
+                "visited",
+                "wish",
+                "lived",
+                "none"
+              ],
+              "description": "visited, wish, lived, or none to remove the mark"
+            }
+          },
+          "required": [
+            "country",
+            "status"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "add_place",
+        "title": "Add a city, region or attraction",
+        "description": "Add a city, region or attraction to the traveler's map inside a given country, with a status and optional date and notes.",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "minLength": 1
+            },
+            "kind": {
+              "type": "string",
+              "enum": [
+                "city",
+                "region",
+                "attraction"
+              ]
+            },
+            "country": {
+              "type": "string",
+              "minLength": 2,
+              "description": "Country name or ISO code"
+            },
+            "status": {
+              "type": "string",
+              "enum": [
+                "visited",
+                "wish",
+                "lived"
+              ],
+              "description": "visited, wish or lived"
+            },
+            "date": {
+              "type": "string",
+              "description": "ISO date, e.g. 2026-04-18"
+            },
+            "notes": {
+              "type": "string",
+              "maxLength": 2000
+            },
+            "lat": {
+              "type": "number",
+              "minimum": -90,
+              "maximum": 90
+            },
+            "lng": {
+              "type": "number",
+              "minimum": -180,
+              "maximum": 180
+            }
+          },
+          "required": [
+            "name",
+            "kind",
+            "country",
+            "status"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_trips",
+        "title": "List trips",
+        "description": "List the signed-in traveler's logged trips, newest first.",
+        "annotations": {
+          "readOnlyHint": true
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "limit": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 200
+            }
+          },
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "add_trip",
+        "title": "Log a trip",
+        "description": "Log a trip in the traveler's journal with a title, start date and optional end date and notes.",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "title": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200
+            },
+            "start": {
+              "type": "string",
+              "description": "ISO start date, e.g. 2026-04-18"
+            },
+            "end": {
+              "type": "string",
+              "description": "ISO end date"
+            },
+            "notes": {
+              "type": "string",
+              "maxLength": 4000
+            }
+          },
+          "required": [
+            "title",
+            "start"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "get_travel_stats",
+        "title": "Get travel stats",
+        "description": "Passport stats for the signed-in traveler: countries visited, share of the world, land area covered and per-continent progress.",
+        "annotations": {
+          "readOnlyHint": true
+        },
+        "inputSchema": {
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "get_country_guide",
+        "title": "Get country travel reference",
+        "description": "Practical traveler reference for a country: emergency numbers, driving side, power plugs and voltage, tap water safety, currency, capital and dial code.",
+        "annotations": {
+          "readOnlyHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "country": {
+              "type": "string",
+              "minLength": 2,
+              "description": "Country name or ISO code"
+            }
+          },
+          "required": [
+            "country"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      }
+    ]
+  }
+}
